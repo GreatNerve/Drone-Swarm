@@ -1,0 +1,22 @@
+num_drones: 4
+neighbor_k: 3
+control_hz: 100
+episode_s: 15.0
+arena_cm: [1000.0, 1000.0, 1000.0]
+collision_cm: 20
+hold_s: 5.0
+test1_dist_cm: 40
+test2_slot_cm: 15
+test3_lag_cm: 50
+speed_max_cmps: 25
+tilt_max_deg: 20.0
+motor_lag: false
+sensor_noise: false
+geometry_kind: square
+geometry_size_cm: 160
+shared_target: [0.0, 0.0, 200.0]
+mass_kg: 0.5
+arm_cm: 12.5
+yaw_coeff: 6.0
+inertia_diag: [23.0, 23.0, 40.0]
+max_thrust: 400.0

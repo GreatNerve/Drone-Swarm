@@ -1,0 +1,12 @@
+---
+description: Git safety and no AI authorship
+alwaysApply: true
+---
+
+# Git
+
+- Commit only when the user asks. Do not change git config.
+- Never add `Co-authored-by`, `Made-with`, `Generated-by`, or any tool/AI author.
+- If a hook or UI appends those trailers, strip them before the commit lands.
+- Never stage `no-push/` or secrets (`.env`).
+- No `--no-verify`, force push to main/master, or hard reset unless the user explicitly asks.

@@ -1,0 +1,13 @@
+---
+description: Lean code: reuse, small diffs, real error handling
+alwaysApply: true
+---
+
+# Code
+
+- Reuse a helper that already exists; do not clone it.
+- Smallest change that fixes the root cause for all callers.
+- No interface/factory/config for a single use.
+- Loading and error states required at trust boundaries. Do not empty-catch.
+- Delete code you replace. Do not comment it out.
+- Match existing names. Do not add a dependency without asking.
