@@ -54,6 +54,23 @@ def test_pid_holds_geometry_slots():
         assert gate["passed"], (kind, gate)
 
 
+def test_pid_holds_after_live_rectangle_switch():
+    cfg = load()
+    from swarm.gates.pass_gate import evaluate_episode
+
+    env = SwarmEnv(cfg, test_id=2, seed=0, eval_mode=True)
+    pid = GeometricPid.from_cfg(cfg, test_id=2)
+    obs = env.reset()
+    n = int(float(cfg["episode_s"]) * float(cfg["control_hz"]))
+    switch = n // 3
+    for i in range(n):
+        if i == switch:
+            env.set_geometry_kind("rectangle")
+        obs = env.step(pid.step(obs)).obs
+    gate = evaluate_episode(env.history, cfg, 2, env.collided, env.out_of_bounds)
+    assert gate["passed"], gate
+
+
 def test_pid_holds_moving_target_ring():
     cfg = load()
     from swarm.gates.pass_gate import evaluate_episode

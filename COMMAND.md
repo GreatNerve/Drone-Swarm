@@ -30,8 +30,8 @@ Do these in order. Do not skip to `sim-resume` on a net that already sits on the
 | 1 | `uv sync --extra dev` | Install deps once |
 | 2 | `make test` | Code is healthy |
 | 3 | `make view-pid TEST=1` | PID hover around the shared target. If this looks wrong, the sim is wrong — do not train |
-| 4 | `make view-pid TEST=2` | PID on square / rectangle / circle slots (`S`/`R`/`C` or keys `1`/`2`/`3`) |
-| 5 | `make view-pid TEST=3` | PID tracks the red target. **Right panel:** drag = x/y, **scroll wheel = z** |
+| 4 | `make view-pid TEST=2` | PID on square / rectangle / circle slots (`S`/`R`/`C` or keys `1`/`2`/`3`). `SPEED=8` if the window feels slow |
+| 5 | `make view-pid TEST=3` | PID tracks the moving red target (3D path). **Right panel:** drag = x/y, **scroll wheel = z** |
 | 6 | `make eval MODE=baseline` | Headless score of that same PID on Tests 1–3 |
 | 7 | `make sim` | **Fresh** RL train: PID clone → critic fit → PPO. Window is noisy collect. **Ctrl+C** to stop |
 | 8 | `make view-train TEST=1` | Clean look at `models/latest.pt` (no train noise) |
@@ -56,7 +56,9 @@ Runs `uv run pytest -q`. Unit tests only.
 
 Live window. Pilot = **geometric PID**, not a neural net. This is the **baseline**. Same physics and tests as RL.
 
-Close the window to stop. Writes `results/submit/` and a run log under `no-push/runs/` (last 3 files).
+Default `SPEED=4` (4× sim time). Keys `+` / `-` change it; `0` is 1×. Closing the window stops the demo and is **not** a gate fail.
+
+Writes `results/submit/` and a run log under `no-push/runs/` (last 3 files).
 
 ### `make view`
 
@@ -120,7 +122,7 @@ make train SEED=0 RESUME=1
 
 ```bash
 make view-pid TEST=1
-make view-pid TEST=2
+make view-pid TEST=2 SPEED=8
 make view-pid TEST=3
 make view-train TEST=2
 ```
@@ -155,11 +157,17 @@ Never stage `no-push/` or `.env`.
 
 ---
 
-## 6. Viewer (Tests 1 and 3)
+## 6. Viewer — what to do on each test
 
-- **Right** plot: drag the red shared target (x/y).
-- **Scroll wheel** on that plot: change **z**.
-- Test 2: click `[S] square` / `[R] rectangle` / `[C] circle` or keys `1` / `2` / `3`. Distances are to **slots** (green triangles), not the red center.
-- Close the window to stop.
+Use the **right** map. The left 3D view is look-only (you can orbit it; it does not move the target).
+
+| Test | What to do | What should happen |
+| --- | --- | --- |
+| 1 | Drag the red dot anywhere on the right map. Scroll to change height. | Drones slide with it and stay on a ring around it, not on the point. |
+| 2 | Drag the red dot to slide the whole shape. Click `[S]`/`[R]`/`[C]` or press `1`/`2`/`3`. Scroll to lift the slots. | Drones snap to the green triangles (slots). Do not judge distance to the red center. |
+| 3 | Click the right map once to take over the scripted path, then drag. Scroll for height. Try a long left-right pull, then a diagonal, then wheel up/down. | Drones keep the ring and follow. Clicking is what stops the automatic 3D path. |
+
+- `+` / `-` change view speed (default 4×). `0` is real time. Slow to `1×` if the red dot feels hard to grab.
+- Close the window to stop. That is not a failed test.
 
 The train window (`make sim`) is exploration noise. Judge the net with `make view-train`, not that window.

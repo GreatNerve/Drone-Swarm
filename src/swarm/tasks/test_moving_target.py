@@ -6,7 +6,7 @@ from swarm.tasks.base import Task, TaskState
 
 
 class MovingTargetTask(Task):
-    def __init__(self, num_drones: int, center: np.ndarray, radius_cm: float = 200.0, period_s: float = 15.0):
+    def __init__(self, num_drones: int, center: np.ndarray, radius_cm: float = 200.0, period_s: float = 12.0):
         self.num_drones = num_drones
         self.center = np.asarray(center, dtype=float)
         self.radius_cm = radius_cm
@@ -24,9 +24,18 @@ class MovingTargetTask(Task):
         if self._joystick is not None:
             target = self._joystick.copy()
         else:
-            w = 2.0 * np.pi / self.period_s
+            # 3D Lissajous chase path (same shared target for every drone)
+            ax = ay = self.radius_cm
+            az = 40.0
+            wx = 2.0 * np.pi / self.period_s
+            wy = 2.0 * np.pi / (self.period_s * 1.5)
+            wz = 2.0 * np.pi / (self.period_s * 0.85)
             target = self.center + np.array(
-                [self.radius_cm * np.cos(w * t), self.radius_cm * np.sin(w * t), 0.0]
+                [
+                    ax * np.sin(wx * t),
+                    ay * np.sin(wy * t + 0.6),
+                    az * np.sin(wz * t),
+                ]
             )
         aim = np.repeat(target[None, :], self.num_drones, axis=0)
         return TaskState(target, None, aim)

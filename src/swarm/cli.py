@@ -36,6 +36,7 @@ def main(argv: list[str] | None = None) -> int:
     p_view.add_argument("--ckpt", choices=("best", "latest"), default="latest")
     p_view.add_argument("--mode", choices=("train", "prod", "baseline"), default=None)
     p_view.add_argument("--view", default="python")
+    p_view.add_argument("--speed", type=float, default=None, help="view time scale (default 4)")
     p_eval = sub.add_parser("eval")
     p_eval.add_argument("--seed", type=int, required=True)
     p_eval.add_argument("--mode", choices=("train", "prod", "baseline"), default="prod")
@@ -99,23 +100,33 @@ def _view(cfg: dict, args: argparse.Namespace) -> int:
             log.error("%s", exc)
             return 1
     viewer = make_viewer(str(args.view), cfg, demo=True)
+    speed = float(args.speed if args.speed is not None else cfg.get("view_speed", 4.0))
+    setter = getattr(viewer, "set_speed", None)
+    if setter is not None:
+        setter(speed)
     obs = env.reset()
     done = False
     tick = 0
     n_steps = env.episode_steps
     t0 = time.perf_counter()
+    closed_early = False
     log.info(
         "mode=%s  models: latest=%s  best=%s",
         mode,
         repo_root() / "models" / "latest.pt",
         repo_root() / "models" / "best.pt",
     )
-    log.info("Test 3: drag the red target on the right. Test 2: keys 1/2/3 or click S/R/C. Close the window to stop.")
+    log.info(
+        "speed=%gx  keys +/- change it, 0 = 1x. Test 3: drag the red target. Test 2: keys 1/2/3 or click S/R/C. Close the window to stop.",
+        speed,
+    )
     result = {"passed": False, "reason": "empty", "error": 1000.0, "test_id": args.test}
     try:
         while True:
             if viewer is not None:
-                _apply_live(env, viewer)
+                live = _apply_live(env, viewer)
+                if live and live.get("view_speed") is not None:
+                    speed = float(live["view_speed"])
                 obs = env._obs()
             if policy is None:
                 act = controller.step(obs)
@@ -129,7 +140,7 @@ def _view(cfg: dict, args: argparse.Namespace) -> int:
             step = env.step(act)
             obs, done = step.obs, step.done
             tick += 1
-            extra = f"view test={args.test} mode={mode} policy={policy_name}"
+            extra = f"view test={args.test} mode={mode} policy={policy_name} {speed:g}x"
             kind = getattr(env.task, "kind", None)
             if kind:
                 extra += f" shape={kind}"
@@ -154,6 +165,7 @@ def _view(cfg: dict, args: argparse.Namespace) -> int:
                 if done:
                     break
             elif not viewer.is_open():
+                closed_early = True
                 break
             elif done:
                 try:
@@ -181,10 +193,11 @@ def _view(cfg: dict, args: argparse.Namespace) -> int:
                 except Exception as exc:
                     log.error("view reset failed: %s", exc)
                     break
+                controller._prev_rel = None
                 tick = 0
                 t0 = time.perf_counter()
             else:
-                lag = tick * env.dt - (time.perf_counter() - t0)
+                lag = tick * env.dt / max(speed, 0.25) - (time.perf_counter() - t0)
                 if lag > 0:
                     time.sleep(min(lag, 0.05))
     finally:
@@ -228,6 +241,9 @@ def _view(cfg: dict, args: argparse.Namespace) -> int:
             log.error("results dump failed: %s", exc)
     log.info("gate=%s", result)
     log.info("submission folder: %s", repo_root() / "results" / "submit")
+    if closed_early and result.get("reason") == "short_episode":
+        log.info("window closed before the hold window; not a gate fail")
+        return 0
     return 0 if result["passed"] else 1
 
 
@@ -289,15 +305,15 @@ def _eval(cfg: dict, args: argparse.Namespace) -> int:
     return 0 if all(g.get("passed") for g in gates) else 1
 
 
-def _apply_live(env: SwarmEnv, viewer) -> None:
+def _apply_live(env: SwarmEnv, viewer) -> dict:
     poll = getattr(viewer, "poll", None)
     if poll is None:
-        return
+        return {}
     try:
         live = poll()
     except Exception as exc:
         log.error("view poll failed: %s", exc)
-        return
+        return {}
     tgt = live.get("target")
     if tgt is not None:
         env.set_joystick_target(np.asarray(tgt, dtype=float))
@@ -307,6 +323,7 @@ def _apply_live(env: SwarmEnv, viewer) -> None:
             env.set_geometry_kind(str(kind))
         except ValueError as exc:
             log.error("%s", exc)
+    return live
 
 
 if __name__ == "__main__":

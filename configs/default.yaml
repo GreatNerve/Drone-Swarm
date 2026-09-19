@@ -9,6 +9,7 @@ test1_dist_cm: 40
 test2_slot_cm: 15
 test3_lag_cm: 50
 speed_max_cmps: 25
+view_speed: 4
 tilt_max_deg: 20.0
 motor_lag: false
 sensor_noise: false

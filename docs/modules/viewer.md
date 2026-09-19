@@ -8,8 +8,8 @@ Draw-only. Never steps physics.
 
 `make view-train` loads `models/latest.pt` (untrained / in-progress). Test 1 will drift until that net actually hovers. `make view-prod` loads `models/best.pt`.
 
-Demo: drag the red shared target on the **right** panel (Tests 1 and 3; scroll wheel changes z). Test 2: click `[S] square` / `[R] rectangle` / `[C] circle` or press `1`/`2`/`3`. Distances are to **slots**, not the red center. Close the window to stop — a pack is written to `results/submit/`. The demo loops the 15 s episode. Each episode also writes `no-push/runs/` (last 3 kept).
+Demo: drag the red target on the **right** map (not the 3D view). Scroll wheel on that map changes **z**. Test 1: move the shared target; drones keep a standoff ring. Test 2: drag moves the whole geometry; `[S]`/`[R]`/`[C]` or keys `1`/`2`/`3` change the shape; distances are to **slots**. Test 3: click once to take over the scripted path, then drag and scroll; drones keep the standoff ring. Close the window to stop — a pack is written to `results/submit/`. Closing early is not a gate fail. The demo loops the 15 s episode. Each episode also writes `no-push/runs/` (last 3 kept).
 
-CLI `make view` runs in real time so motion matches a demo, not a time-lapse.
+`SPEED=4` (default) runs the viewer at 4× sim time. Keys `+` / `-` double or halve; `0` is 1×. `make view-pid TEST=2 SPEED=8`.
 
 `VIEW=gazebo` launches `assets/worlds/swarm.sdf` if `gz` or `gazebo` is on PATH; otherwise falls back to python.

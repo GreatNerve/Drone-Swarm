@@ -111,8 +111,14 @@ class PythonView:
         self._geometry_kind: str | None = None
         self._kind_i = 0
         self._target_z = 200.0
+        self._view_speed = float(cfg.get("view_speed", 4.0))
+        self._drag_limits: tuple[tuple[float, float], tuple[float, float]] | None = None
         self._last_snap: dict | None = None
         self._kind_hits: list[tuple[str, tuple[float, float, float, float]]] = []
+        try:
+            self.ax_m.set_navigate(False)
+        except Exception:
+            pass
         if self.demo and not self.headless:
             try:
                 self.fig.canvas.mpl_disconnect(self.fig.canvas.manager.key_press_handler_id)
@@ -137,7 +143,10 @@ class PythonView:
             self._set_bar(stats)
         self._draw_world(snap, stats or {})
         self._last_snap = snap
-        self._target_z = float(np.asarray(snap["shared_target"])[2])
+        if self._live_target is None:
+            self._target_z = float(np.asarray(snap["shared_target"])[2])
+        else:
+            self._target_z = float(self._live_target[2])
         if self.demo:
             self._draw_topdown(snap)
         else:
@@ -247,7 +256,11 @@ class PythonView:
             kind = "PID hover"
         else:
             kind = "noisy train collect"
-        ax.set_title(f"{names.get(test_id, 'Test')}  ({kind})", color="white", pad=8)
+        ax.set_title(
+            f"{names.get(test_id, 'Test')}  ({kind})   {self._view_speed:g}x  +/- speed",
+            color="white",
+            pad=8,
+        )
         reach, span = self._frame_camera(ax, pos, target, test_id, s)
         if bool(np.any(hit)):
             ax.text2D(
@@ -260,6 +273,14 @@ class PythonView:
             )
         if self._verts.size == 0:
             ax.text2D(0.02, 0.06, "OBJ mesh missing — drawing X-frame", transform=ax.transAxes, color="#e74c3c", fontsize=8)
+        ax.text2D(
+            0.02,
+            0.02,
+            "drag the red dot on the RIGHT map  (not this 3D view)",
+            transform=ax.transAxes,
+            color="#f5b041",
+            fontsize=8,
+        )
         if reach > span * 0.98:
             ax.text2D(0.5, 0.04, "drones left the hover volume", ha="center", transform=ax.transAxes, color="#e74c3c", fontsize=8)
         ax.set_xlabel("x", color="#aaa")
@@ -374,7 +395,16 @@ class PythonView:
         target = np.asarray(snap["shared_target"], dtype=float)
         th = np.linspace(0, 2 * np.pi, 48)
         ax.plot(target[0] + self._standoff * np.cos(th), target[1] + self._standoff * np.sin(th), color="#e74c3c", ls="--", lw=1.1)
-        ax.scatter([target[0]], [target[1]], c="#e74c3c", s=70, zorder=4)
+        ax.scatter([target[0]], [target[1]], c="#e74c3c", s=220, zorder=6, edgecolors="white", linewidths=1.4)
+        ax.annotate(
+            "drag",
+            (target[0], target[1]),
+            textcoords="offset points",
+            xytext=(10, 10),
+            color="#f5b041",
+            fontsize=9,
+            fontweight="bold",
+        )
         slots = snap.get("slots")
         s = None
         if slots is not None:
@@ -389,7 +419,12 @@ class PythonView:
             ax.text(p[0] + 6.0, p[1] + 6.0, f"d{i}", color=color, fontsize=8)
         ax.set_title("top-down  |  drag red target   S/R/C shape", color="white")
         test_id = int(snap.get("test_id") or 1)
-        if test_id == 2 and s is not None and len(s):
+        if self._drag_limits is not None:
+            (x0, x1), (y0, y1) = self._drag_limits
+            ax.set_xlim(x0, x1)
+            ax.set_ylim(y0, y1)
+            dists = np.linalg.norm(pos - s, axis=1) if test_id == 2 and s is not None else np.linalg.norm(pos - target, axis=1)
+        elif test_id == 2 and s is not None and len(s):
             focus = s.mean(axis=0)
             span = min(350.0, max(180.0, float(np.max(np.linalg.norm(s[:, :2] - focus[:2], axis=1))) * 1.8 + 40.0))
             ax.set_xlim(focus[0] - span, focus[0] + span)
@@ -408,7 +443,7 @@ class PythonView:
         ax.set_ylabel("y", color="#aaa")
         kind = snap.get("geometry_kind") or ""
         if test_id == 2:
-            hint = f"geometry {kind}   click S/R/C or keys 1/2/3"
+            hint = f"drag red = move shape   S/R/C or 1/2/3   +/- speed {self._view_speed:g}x"
             self._kind_hits = [
                 ("square", (0.02, 0.88, 0.42, 0.98)),
                 ("rectangle", (0.02, 0.78, 0.42, 0.88)),
@@ -427,9 +462,9 @@ class PythonView:
         else:
             self._kind_hits = []
             if test_id == 3:
-                hint = "drag red target on this panel  |  wheel = z"
+                hint = f"drag red target  |  wheel = z  |  +/- speed {self._view_speed:g}x"
             else:
-                hint = "drag red target on this panel"
+                hint = f"drag red target  |  +/- speed {self._view_speed:g}x"
         ax.text(
             0.02,
             0.02,
@@ -503,8 +538,11 @@ class PythonView:
             family="monospace",
         )
 
+    def set_speed(self, speed: float) -> None:
+        self._view_speed = float(np.clip(speed, 0.5, 16.0))
+
     def poll(self) -> dict:
-        out: dict = {}
+        out: dict = {"view_speed": self._view_speed}
         if self._live_target is not None:
             out["target"] = self._live_target.copy()
         if self._geometry_kind is not None:
@@ -523,13 +561,37 @@ class PythonView:
         y = float(np.clip(y, self._ylim[0], self._ylim[1]))
         return x, y
 
+    def _in_map(self, event) -> bool:
+        if event.inaxes is self.ax_m:
+            return True
+        if event.x is None or event.y is None:
+            return False
+        try:
+            return bool(self.ax_m.get_window_extent().contains(event.x, event.y))
+        except Exception:
+            return False
+
+    def _event_xy(self, event, *, dragging: bool = False) -> tuple[float, float] | None:
+        if event.inaxes is self.ax_m and event.xdata is not None and event.ydata is not None:
+            return float(event.xdata), float(event.ydata)
+        if not (dragging or self._in_map(event)):
+            return None
+        if event.x is None or event.y is None:
+            return None
+        try:
+            x, y = self.ax_m.transData.inverted().transform((event.x, event.y))
+        except Exception:
+            return None
+        return float(x), float(y)
+
     def _set_target_xy(self, x: float, y: float) -> None:
         x, y = self._clip_xy(x, y)
         z = float(np.clip(self._target_z, self._zlim[0] + 30.0, self._zlim[1] - 30.0))
         self._live_target = np.array([x, y, z], dtype=float)
 
     def _on_press(self, event) -> None:
-        if event.inaxes != self.ax_m or event.xdata is None or event.ydata is None:
+        xy = self._event_xy(event)
+        if xy is None:
             return
         snap = self._last_snap
         test_id = int((snap or {}).get("test_id") or 1)
@@ -537,25 +599,28 @@ class PythonView:
             kind = self._hit_kind(event)
             if kind is not None:
                 self._geometry_kind = kind
-            return
+                return
         self._dragging = True
-        self._set_target_xy(float(event.xdata), float(event.ydata))
+        self._drag_limits = (self.ax_m.get_xlim(), self.ax_m.get_ylim())
+        self._set_target_xy(xy[0], xy[1])
 
     def _on_motion(self, event) -> None:
-        if not self._dragging or event.inaxes != self.ax_m:
+        if not self._dragging:
             return
-        if event.xdata is None or event.ydata is None:
+        xy = self._event_xy(event, dragging=True)
+        if xy is None:
             return
-        self._set_target_xy(float(event.xdata), float(event.ydata))
+        self._set_target_xy(xy[0], xy[1])
 
     def _on_release(self, event) -> None:
         self._dragging = False
+        self._drag_limits = None
 
     def _on_scroll(self, event) -> None:
-        if event.inaxes != self.ax_m:
+        if not self._in_map(event):
             return
         snap = self._last_snap
-        if snap is None or int(snap.get("test_id") or 1) == 2:
+        if snap is None:
             return
         dz = 12.0 if getattr(event, "button", None) == "up" else -12.0
         if self._live_target is None:
@@ -565,6 +630,15 @@ class PythonView:
 
     def _on_key(self, event) -> None:
         key = (event.key or "").lower()
+        if key in ("+", "=", "up"):
+            self._view_speed = float(min(16.0, self._view_speed * 2.0))
+            return
+        if key in ("-", "down"):
+            self._view_speed = float(max(0.5, self._view_speed / 2.0))
+            return
+        if key == "0":
+            self._view_speed = 1.0
+            return
         if key in _KIND_KEYS:
             self._geometry_kind = _KIND_KEYS[key]
             return

@@ -21,6 +21,7 @@ def test_shared_target_and_slots():
     a = t3.step(0.0).shared_target
     b = t3.step(1.0).shared_target
     assert not np.allclose(a, b)
+    assert abs(float(b[2] - a[2])) > 1.0
 
 
 def test_joystick_overrides_scripted_target():
@@ -52,4 +53,16 @@ def test_env_applies_live_geometry():
     assert env.task_state is not None
     assert env.task_state.slot_positions is not None
     env.set_joystick_target([50.0, 0.0, 200.0])
+    center = env.task_state.slot_positions.mean(axis=0)
+    assert np.allclose(center[:2], [50.0, 0.0], atol=1.0)
+
+
+def test_geometry_origin_follows_joystick():
+    g = GeometryTask(4, "square", 160.0)
+    g.reset(np.random.default_rng(0))
+    before = g.step(0.0).slot_positions.copy()
+    g.set_joystick_target([80.0, -40.0, 210.0])
+    after = g.step(0.0).slot_positions
+    assert np.allclose(after.mean(axis=0), [80.0, -40.0, 210.0], atol=1.0)
+    assert not np.allclose(before, after)
 

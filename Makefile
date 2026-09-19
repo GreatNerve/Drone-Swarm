@@ -9,6 +9,7 @@ CKPT ?= latest
 MODE ?= prod
 SEED ?= 0
 RESUME ?= 0
+SPEED ?= 4
 
 RESUME_FLAG :=
 ifeq ($(RESUME),1)
@@ -32,7 +33,7 @@ help:
 	@echo "models: models/latest.pt  (train dump)   models/best.pt  (prod dump)"
 	@echo "submit: results/submit/   (images, graphs, result.md, data, copied ckpt)"
 	@echo ""
-	@echo "vars: SEED=$(SEED) TEST=$(TEST) POLICY=$(POLICY) CKPT=$(CKPT) MODE=$(MODE) VIEW=$(VIEW)"
+	@echo "vars: SEED=$(SEED) TEST=$(TEST) POLICY=$(POLICY) CKPT=$(CKPT) MODE=$(MODE) VIEW=$(VIEW) SPEED=$(SPEED)"
 
 test:
 	$(UV) run pytest -q
@@ -47,16 +48,16 @@ sim-resume:
 	$(UV) run python -m swarm train --view python --seed $(SEED) --resume
 
 view:
-	$(UV) run python -m swarm view --policy $(POLICY) --ckpt $(CKPT) --test $(TEST) --seed $(SEED) --view python
+	$(UV) run python -m swarm view --policy $(POLICY) --ckpt $(CKPT) --test $(TEST) --seed $(SEED) --view python --speed $(SPEED)
 
 view-pid:
-	$(UV) run python -m swarm view --policy baseline --test $(TEST) --seed $(SEED) --view python
+	$(UV) run python -m swarm view --policy baseline --test $(TEST) --seed $(SEED) --view python --speed $(SPEED)
 
 view-train:
-	$(UV) run python -m swarm view --mode train --test $(TEST) --seed $(SEED) --view python
+	$(UV) run python -m swarm view --mode train --test $(TEST) --seed $(SEED) --view python --speed $(SPEED)
 
 view-prod:
-	$(UV) run python -m swarm view --mode prod --test $(TEST) --seed $(SEED) --view python
+	$(UV) run python -m swarm view --mode prod --test $(TEST) --seed $(SEED) --view python --speed $(SPEED)
 
 eval:
 	$(UV) run python -m swarm eval --mode $(MODE) --seed $(SEED) --view $(VIEW)

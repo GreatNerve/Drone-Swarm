@@ -40,6 +40,7 @@ class GeometricPid:
         self.body_z = 0.6 * collision_cm
         self._tilt_acc = G * np.tan(self.max_tilt)
         self.dt = 0.01
+        self._use_ff = False
         self._prev_rel: np.ndarray | None = None
 
     @classmethod
@@ -54,8 +55,14 @@ class GeometricPid:
         tilt, climb, _yaw = cmd_scales(cfg)
         pid = cls(float(cfg["collision_cm"]), standoff, tilt, climb)
         pid.dt = 1.0 / float(cfg["control_hz"])
+        if tid == 2:
+            pid.kp = 6.0
+            pid.kd = 3.2
         if tid == 3:
+            pid.kp = 4.5
+            pid.kd = 2.8
             pid.k_alt = 800.0
+            pid._use_ff = True
         return pid
 
     def step(self, obs: np.ndarray) -> np.ndarray:
@@ -65,10 +72,12 @@ class GeometricPid:
         out = np.zeros((obs.shape[0], 4), dtype=np.float32)
         rels = obs[:, 0:3]
         vels = obs[:, 3:6]
-        if self._prev_rel is not None and self._prev_rel.shape == rels.shape:
-            aim_vel = vels - (rels - self._prev_rel) / self.dt
-        else:
-            aim_vel = np.zeros_like(rels)
+        aim_vel = np.zeros_like(rels)
+        if self._use_ff and self._prev_rel is not None and self._prev_rel.shape == rels.shape:
+            drel = rels - self._prev_rel
+            jump = np.linalg.norm(drel, axis=1) > 20.0
+            aim_vel = vels - drel / self.dt
+            aim_vel[jump] = 0.0
         self._prev_rel = rels.copy()
         for i, row in enumerate(obs):
             rel = row[0:3]
@@ -76,7 +85,7 @@ class GeometricPid:
             err = _ring_error(rel, self.standoff_cm)
             acc = -self.kp * err - self.kd * (vel - aim_vel[i])
             # leave tilt budget for repulsion so chase does not squeeze drones together
-            track = 0.8 * self._tilt_acc
+            track = (0.95 if self.standoff_cm <= 1e-6 else 0.8) * self._tilt_acc
             acc[0] = float(np.clip(acc[0], -track, track))
             acc[1] = float(np.clip(acc[1], -track, track))
             acc = acc + self._repulsion(row[18:])

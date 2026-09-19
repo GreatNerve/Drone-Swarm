@@ -37,17 +37,33 @@ class GeometryTask(Task):
     def __init__(self, num_drones: int, kind: str, size_cm: float, z: float = 200.0):
         self.num_drones = num_drones
         self.size_cm = size_cm
-        self.z = z
+        self.z = float(z)
         self.kind = kind
-        self._slots = slot_positions(kind, num_drones, size_cm, z)
+        self.origin = np.array([0.0, 0.0, self.z], dtype=float)
+        self._rebuild()
+
+    def _rebuild(self) -> None:
+        o = self.origin
+        slots = slot_positions(self.kind, self.num_drones, self.size_cm, float(o[2]))
+        slots[:, 0] += o[0]
+        slots[:, 1] += o[1]
+        self._slots = slots
 
     def set_kind(self, kind: str) -> None:
         k = str(kind).strip().lower()
-        self._slots = slot_positions(k, self.num_drones, self.size_cm, self.z)
+        slot_positions(k, self.num_drones, self.size_cm, float(self.origin[2]))
         self.kind = k
+        self._rebuild()
+
+    def set_joystick_target(self, xyz: np.ndarray | None) -> None:
+        if xyz is None:
+            return
+        self.origin = np.asarray(xyz, dtype=float).copy()
+        self._rebuild()
 
     def reset(self, rng: np.random.Generator) -> TaskState:
-        self._slots = slot_positions(self.kind, self.num_drones, self.size_cm, self.z)
+        self.origin = np.array([0.0, 0.0, self.z], dtype=float)
+        self._rebuild()
         return self.step(0.0)
 
     def step(self, t: float) -> TaskState:
