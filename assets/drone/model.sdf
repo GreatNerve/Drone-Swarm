@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="quadrotor">
+    <static>true</static>
+    <pose>0 0 0.02 0 0 0</pose>
+    <link name="body">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>quadrotor.obj</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

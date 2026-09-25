@@ -1,0 +1,14 @@
+---
+description: How to write and update modular docs
+globs: docs/**/*.md,CONTEXT.md,AGENTS.md,README.md
+alwaysApply: false
+---
+
+# Docs
+
+- One concern per file. Update the existing file; do not append unrelated sections.
+- `CONTEXT.md`: terms, aliases, flagged ambiguities. No implementation.
+- `docs/modules/<name>.md`: one file per code module.
+- `docs/adr/NNNN-title.md`: only for costly, considered decisions.
+- Keep `docs/README.md` index links accurate when adding a file.
+- Do not duplicate `no-push/` extracts into `docs/`.

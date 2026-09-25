@@ -1,0 +1,19 @@
+---
+description: Query the knowledge graph instead of re-searching the repo
+alwaysApply: true
+---
+
+# Graphify
+
+Default: skip. Query only for architecture / "where is X" when this chat does not already have the answer.
+
+```
+graphify query "<question>"
+graphify path "A" "B"
+graphify explain "Node"
+```
+
+- Do not query, detect, extract, or `--update` for a known-file bugfix or a demo-issue report (`no-push/runs/` first).
+- `--update` only on explicit `/graphify` or after a local query miss. Local AST only.
+- Gemini only if that local extract fails.
+- Cache expensive conversions in `no-push/extracts/` and reuse them.

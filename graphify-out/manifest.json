@@ -1,0 +1,404 @@
+{
+  "AGENTS.md": {
+    "mtime": 1789762256.8246512,
+    "seen": 1789763665.1929715,
+    "ast_hash": "69972056b1dacee6d2176d6f58fa35fd",
+    "semantic_hash": "69972056b1dacee6d2176d6f58fa35fd"
+  },
+  "CONTEXT.md": {
+    "mtime": 1789770383.6867085,
+    "seen": 1789771243.6630814,
+    "ast_hash": "ba1b3cda15ed3181e285bde44cd7ccf8",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1789770014.5611882,
+    "seen": 1789771243.6630826,
+    "ast_hash": "94533a6a87d86e79779cd7484cc1e212",
+    "semantic_hash": ""
+  },
+  "docs/README.md": {
+    "mtime": 1789762256.8316925,
+    "seen": 1789763665.192978,
+    "ast_hash": "4b4bab10742fffe4435817371594c6d7",
+    "semantic_hash": ""
+  },
+  "docs/adr/README.md": {
+    "mtime": 1789770014.6532626,
+    "seen": 1789771243.6630878,
+    "ast_hash": "b701f92564b1d929e69a5cc0322a9db0",
+    "semantic_hash": ""
+  },
+  "docs/agent-workflow.md": {
+    "mtime": 1789762256.8316925,
+    "seen": 1789763665.1929796,
+    "ast_hash": "871916e5052ee1cd59c3e8a2a46d0c90",
+    "semantic_hash": "871916e5052ee1cd59c3e8a2a46d0c90"
+  },
+  "docs/architecture.md": {
+    "mtime": 1789770014.625135,
+    "seen": 1789771243.6630898,
+    "ast_hash": "598323b5655b556cc357f729bea8fea8",
+    "semantic_hash": ""
+  },
+  "docs/conventions.md": {
+    "mtime": 1789762256.809463,
+    "seen": 1789763665.1929812,
+    "ast_hash": "0685da6b0b2d84a238b2fb6a7fd6b66f",
+    "semantic_hash": ""
+  },
+  "docs/modules/README.md": {
+    "mtime": 1789770014.6391394,
+    "seen": 1789771243.6630912,
+    "ast_hash": "4940488959b804cee196f26a9beed7da",
+    "semantic_hash": ""
+  },
+  "docs/overview.md": {
+    "mtime": 1789770014.6041343,
+    "seen": 1789771243.6631012,
+    "ast_hash": "90834bb241a9dc1aadd5ff5921dccaa5",
+    "semantic_hash": ""
+  },
+  "docs/prd.md": {
+    "mtime": 1789770014.6836057,
+    "seen": 1789771243.663102,
+    "ast_hash": "03a19bd06791ee7e59d90b1dd07504a9",
+    "semantic_hash": ""
+  },
+  "pyproject.toml": {
+    "mtime": 1789762256.8236506,
+    "seen": 1789763665.1929405,
+    "ast_hash": "69f8344270a09a699f394e8fea54d12d",
+    "semantic_hash": ""
+  },
+  "src/swarm/__init__.py": {
+    "mtime": 1789762256.8316925,
+    "seen": 1789763665.1929443,
+    "ast_hash": "a28aa88cc223eddd9022bcb302fdace2",
+    "semantic_hash": ""
+  },
+  "src/swarm/__main__.py": {
+    "mtime": 1789762256.8115342,
+    "seen": 1789763665.1929462,
+    "ast_hash": "34c92c7a50ba91d10ce5d2743fb2d8a9",
+    "semantic_hash": ""
+  },
+  "src/swarm/baseline/__init__.py": {
+    "mtime": 1789762256.8236506,
+    "seen": 1789763665.192947,
+    "ast_hash": "c268eb8cf540929f0c69713e103a71ee",
+    "semantic_hash": ""
+  },
+  "src/swarm/baseline/pid.py": {
+    "mtime": 1789771134.5997858,
+    "seen": 1789771243.663048,
+    "ast_hash": "c839c6fd5375f7cf29c46bdc6a2d4d6b",
+    "semantic_hash": ""
+  },
+  "src/swarm/cli.py": {
+    "mtime": 1789771218.9317265,
+    "seen": 1789771243.6630492,
+    "ast_hash": "71ddf102650150ef4f519d8cb9769e8a",
+    "semantic_hash": ""
+  },
+  "src/swarm/config.py": {
+    "mtime": 1789762256.8286622,
+    "seen": 1789763665.192949,
+    "ast_hash": "928bfeb4d6e0658733cc3978519477ba",
+    "semantic_hash": ""
+  },
+  "src/swarm/dynamics/__init__.py": {
+    "mtime": 1789762256.8206532,
+    "seen": 1789763665.1929498,
+    "ast_hash": "93d94dbf57fba3f51bdf5b395aa1b593",
+    "semantic_hash": ""
+  },
+  "src/swarm/dynamics/quadrotor.py": {
+    "mtime": 1789770014.7448401,
+    "seen": 1789771243.663055,
+    "ast_hash": "f33644159192565e54851e02f3f5cd14",
+    "semantic_hash": ""
+  },
+  "src/swarm/env/__init__.py": {
+    "mtime": 1789762256.8246512,
+    "seen": 1789763665.1929512,
+    "ast_hash": "9b699f8629a965c314ac7d55b0926782",
+    "semantic_hash": ""
+  },
+  "src/swarm/env/swarm_env.py": {
+    "mtime": 1789770189.697773,
+    "seen": 1789771243.6630566,
+    "ast_hash": "09c281768b384eb79878ced5c7117ea7",
+    "semantic_hash": ""
+  },
+  "src/swarm/gates/__init__.py": {
+    "mtime": 1789762256.8135345,
+    "seen": 1789763665.192953,
+    "ast_hash": "b87a0042dece3387472869511c641350",
+    "semantic_hash": ""
+  },
+  "src/swarm/gates/pass_gate.py": {
+    "mtime": 1789770243.4669363,
+    "seen": 1789771243.6630585,
+    "ast_hash": "6a7077527e3d0cb98a94829dfbcdabfb",
+    "semantic_hash": ""
+  },
+  "src/swarm/obs/__init__.py": {
+    "mtime": 1789762256.8286622,
+    "seen": 1789763665.1929543,
+    "ast_hash": "2d3a59720ecbf3dd1d6d891cbbdcfbf6",
+    "semantic_hash": ""
+  },
+  "src/swarm/obs/local_obs.py": {
+    "mtime": 1789762256.8196516,
+    "seen": 1789763665.1929548,
+    "ast_hash": "e700983e34e3177afca523503de5e967",
+    "semantic_hash": ""
+  },
+  "src/swarm/policy/__init__.py": {
+    "mtime": 1789762256.8186517,
+    "seen": 1789763665.1929557,
+    "ast_hash": "eb5082bf15ac09b2797a18f82c976d20",
+    "semantic_hash": ""
+  },
+  "src/swarm/policy/actor_critic.py": {
+    "mtime": 1789770014.8446155,
+    "seen": 1789771243.663062,
+    "ast_hash": "6a0a746d2c22a727b260fa58d92587f7",
+    "semantic_hash": ""
+  },
+  "src/swarm/tasks/__init__.py": {
+    "mtime": 1789762256.8115342,
+    "seen": 1789763665.192957,
+    "ast_hash": "38ac78654cd50f2bfdc41c021ed84df4",
+    "semantic_hash": ""
+  },
+  "src/swarm/tasks/base.py": {
+    "mtime": 1789762256.809463,
+    "seen": 1789763665.1929576,
+    "ast_hash": "d02aeba6a29b42f6070a6d405396661d",
+    "semantic_hash": ""
+  },
+  "src/swarm/tasks/test_geometry.py": {
+    "mtime": 1789770014.7694035,
+    "seen": 1789771243.6630657,
+    "ast_hash": "c9f618cc1530a3e68491340f6fb8ee62",
+    "semantic_hash": ""
+  },
+  "src/swarm/tasks/test_moving_target.py": {
+    "mtime": 1789762256.8296926,
+    "seen": 1789763665.192959,
+    "ast_hash": "f1d56e7bcc43bb5abcb3a9b7b018666c",
+    "semantic_hash": ""
+  },
+  "src/swarm/tasks/test_static_target.py": {
+    "mtime": 1789770014.75686,
+    "seen": 1789771243.6630673,
+    "ast_hash": "b3d58cd5d4e10c341b562f16698ba060",
+    "semantic_hash": ""
+  },
+  "src/swarm/train/__init__.py": {
+    "mtime": 1789770014.8959384,
+    "seen": 1789771243.6630678,
+    "ast_hash": "46849cb9002a7489fa6d27bc1f722f3e",
+    "semantic_hash": ""
+  },
+  "src/swarm/train/loop.py": {
+    "mtime": 1789770014.8793385,
+    "seen": 1789771243.6630688,
+    "ast_hash": "400a559a39d50cd4c2e829b435201869",
+    "semantic_hash": ""
+  },
+  "src/swarm/train/workers.py": {
+    "mtime": 1789762256.8306932,
+    "seen": 1789763665.1929617,
+    "ast_hash": "e32f4eacd1581ebc7bd20b0bbbb3e543",
+    "semantic_hash": ""
+  },
+  "src/swarm/viewer/__init__.py": {
+    "mtime": 1789770014.9317317,
+    "seen": 1789771243.6630704,
+    "ast_hash": "79face2091e590e4e2388667b0b049d7",
+    "semantic_hash": ""
+  },
+  "src/swarm/viewer/gazebo_view.py": {
+    "mtime": 1789770014.9450095,
+    "seen": 1789771243.663071,
+    "ast_hash": "a181a2bc878258dd6fb6cc20e1f55a96",
+    "semantic_hash": ""
+  },
+  "src/swarm/viewer/python_view.py": {
+    "mtime": 1789771176.9168813,
+    "seen": 1789771243.663072,
+    "ast_hash": "19b16928f8796422230985ba7ee9add1",
+    "semantic_hash": ""
+  },
+  "tests/test_baseline.py": {
+    "mtime": 1789771219.3748286,
+    "seen": 1789771243.6630726,
+    "ast_hash": "b47efbf933ee89969b12d0c97ffd985e",
+    "semantic_hash": ""
+  },
+  "tests/test_dynamics.py": {
+    "mtime": 1789762256.8306932,
+    "seen": 1789763665.1929653,
+    "ast_hash": "953fc8b39ea4fb0329fe0f057dce2751",
+    "semantic_hash": ""
+  },
+  "tests/test_env.py": {
+    "mtime": 1789770444.2748737,
+    "seen": 1789771243.6630754,
+    "ast_hash": "22d4acda582bcdb401386287d2a11861",
+    "semantic_hash": ""
+  },
+  "tests/test_gates.py": {
+    "mtime": 1789762256.8306932,
+    "seen": 1789763665.192967,
+    "ast_hash": "d1c93b42d5220cb56ae1505fa1d2990b",
+    "semantic_hash": ""
+  },
+  "tests/test_policy.py": {
+    "mtime": 1789770015.1713517,
+    "seen": 1789771243.6630766,
+    "ast_hash": "c5b268c68feb226dda2d059c347820a6",
+    "semantic_hash": ""
+  },
+  "tests/test_tasks.py": {
+    "mtime": 1789770014.9896815,
+    "seen": 1789771243.6630783,
+    "ast_hash": "4eaba833630e1093939af11195508f96",
+    "semantic_hash": ""
+  },
+  "tests/test_viewer.py": {
+    "mtime": 1789770371.5229063,
+    "seen": 1789771243.6630793,
+    "ast_hash": "6a5bcb489804f1e0757fb1ea8327be27",
+    "semantic_hash": ""
+  },
+  "assets/drone/README.md": {
+    "mtime": 1789762256.8316925,
+    "seen": 1789763665.192975,
+    "ast_hash": "24a151aca469364f8d4f78d88602495a",
+    "semantic_hash": ""
+  },
+  "configs/default.yaml": {
+    "mtime": 1789762256.8155339,
+    "seen": 1789763665.1929758,
+    "ast_hash": "8b24b89dcbc35b246a20d6d1b5b713bf",
+    "semantic_hash": ""
+  },
+  "configs/train.yaml": {
+    "mtime": 1789770014.7312968,
+    "seen": 1789771243.6630852,
+    "ast_hash": "e7cc160474c5a724592e7bd2c69d4194",
+    "semantic_hash": ""
+  },
+  "docs/modules/baseline.md": {
+    "mtime": 1789771180.4205544,
+    "seen": 1789771243.6630921,
+    "ast_hash": "6d3753d0acb4511ba4cf141f4e2a1ec9",
+    "semantic_hash": ""
+  },
+  "docs/modules/dynamics.md": {
+    "mtime": 1789770015.0319383,
+    "seen": 1789771243.6630938,
+    "ast_hash": "13001a9ffe7e8e21666599521fabac75",
+    "semantic_hash": ""
+  },
+  "docs/modules/env.md": {
+    "mtime": 1789770385.4512255,
+    "seen": 1789771243.6630948,
+    "ast_hash": "ab99ed807c00462885b1924f32b09e58",
+    "semantic_hash": ""
+  },
+  "docs/modules/gates.md": {
+    "mtime": 1789770391.7601776,
+    "seen": 1789771243.6630955,
+    "ast_hash": "0ecab90a656863e69222a41c3ac6048d",
+    "semantic_hash": ""
+  },
+  "docs/modules/obs.md": {
+    "mtime": 1789762256.8256512,
+    "seen": 1789763665.1929858,
+    "ast_hash": "e0ed38a3c0aefdafcb21d7f294c3351f",
+    "semantic_hash": ""
+  },
+  "docs/modules/policy.md": {
+    "mtime": 1789770015.1196635,
+    "seen": 1789771243.6630974,
+    "ast_hash": "4fc5dbcb9316e4dcdf32724f0e87e16f",
+    "semantic_hash": ""
+  },
+  "docs/modules/tasks.md": {
+    "mtime": 1789770015.080578,
+    "seen": 1789771243.6630988,
+    "ast_hash": "9452b6807ac1cd88600ecbb6f4ff1194",
+    "semantic_hash": ""
+  },
+  "docs/modules/train.md": {
+    "mtime": 1789770015.1334767,
+    "seen": 1789771243.6630993,
+    "ast_hash": "02a27d21479b366085e15b9d399b6f1d",
+    "semantic_hash": ""
+  },
+  "docs/modules/viewer.md": {
+    "mtime": 1789771187.2234354,
+    "seen": 1789771243.6631005,
+    "ast_hash": "e21f7cc6c1b4c972c79085b1253e4581",
+    "semantic_hash": ""
+  },
+  "docs/trd.md": {
+    "mtime": 1789770391.809713,
+    "seen": 1789771243.6631026,
+    "ast_hash": "af3f99a34a43a0e0fb8bdaab2db8c72d",
+    "semantic_hash": ""
+  },
+  "src/swarm/report.py": {
+    "mtime": 1789770015.201044,
+    "seen": 1789771243.6630628,
+    "ast_hash": "e87946c8db154911350359cd46b22c56",
+    "semantic_hash": ""
+  },
+  "tests/test_report.py": {
+    "mtime": 1789770015.2363591,
+    "seen": 1789771243.6630774,
+    "ast_hash": "9e681169b59a3e85cfca26fd93b3ff10",
+    "semantic_hash": ""
+  },
+  "docs/modules/report.md": {
+    "mtime": 1789770015.2243605,
+    "seen": 1789771243.663098,
+    "ast_hash": "6972950d28efd5361f8c05fad8d5a491",
+    "semantic_hash": ""
+  },
+  "src/swarm/driver/__init__.py": {
+    "mtime": 1789770015.2706647,
+    "seen": 1789771243.6630516,
+    "ast_hash": "e54de8e681a675e66e8bdb4e5f3b27d2",
+    "semantic_hash": ""
+  },
+  "src/swarm/driver/attitude.py": {
+    "mtime": 1789770015.2503662,
+    "seen": 1789771243.6630526,
+    "ast_hash": "d89da89d76524b2dd9373ac75d22e05e",
+    "semantic_hash": ""
+  },
+  "tests/test_driver.py": {
+    "mtime": 1789770015.297024,
+    "seen": 1789771243.6630735,
+    "ast_hash": "c57b6f75f24e684b9efe2c616c172cc9",
+    "semantic_hash": ""
+  },
+  "docs/adr/0001-flight-cmd-attitude.md": {
+    "mtime": 1789770015.3484833,
+    "seen": 1789771243.6630871,
+    "ast_hash": "e05a5bc409fe8d9948dde5e9ad024575",
+    "semantic_hash": ""
+  },
+  "docs/modules/driver.md": {
+    "mtime": 1789770015.3212883,
+    "seen": 1789771243.663093,
+    "ast_hash": "bc4a8a3d553be8af7da5cf137fd007a2",
+    "semantic_hash": ""
+  }
+}

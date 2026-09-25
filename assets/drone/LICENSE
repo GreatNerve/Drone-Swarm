@@ -1,0 +1,4 @@
+CC0 1.0 Universal
+
+Original X-config quadrotor mesh for this project. Visual only.
+Motor order matches dynamics: 0 FR, 1 RR, 2 RL, 3 FL. Units: meters.
