@@ -1,0 +1,111 @@
+\chapter{Appendix}
+\label{app:commands}
+
+\section*{A.1 Software Environment}
+The implementation is available in the project repository \url{https://github.com/GreatNerve/Drone-Swarm}
+(branch \texttt{nishant}). It is a Python package (\texttt{swarmflow}) managed with the \texttt{uv} package
+manager. Table~\ref{tab:software} lists the software used for the results in this report.
+
+\begin{table}[htbp]
+\centering
+\caption{Software environment used for training and evaluation}
+\label{tab:software}
+\small
+\begin{tabularx}{\textwidth}{@{}llX@{}}
+\toprule
+Component & Version used & Purpose\\
+\midrule
+Python & 3.12 & programming language (3.11--3.13 supported)\\
+NumPy & 2.5.3 & vectorised simulation, dynamics and collision checks\\
+Gymnasium & 1.3.0 & observation and action space definitions\\
+PettingZoo & 1.27.0 & parallel multi-agent environment interface\\
+PyTorch & 2.14.0 & neural networks, PPO and imitation training\\
+pytest & 8.4.2 & automated unit tests\\
+HTML / JavaScript canvas & -- & browser flight laboratory (no external libraries)\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section*{A.2 Project Structure}
+\begin{table}[htbp]
+\centering
+\caption{Main folders and files of the project}
+\label{tab:structure}
+\small
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+Path & Contents\\
+\midrule
+\texttt{src/swarmflow/} & source code: environment, scenarios, policy, training, curriculum, evaluation, viewer server\\
+\texttt{src/swarmflow/web/} & flight-laboratory front end (\texttt{index.html}, \texttt{app.js}, \texttt{style.css})\\
+\texttt{tests/} & 40 unit tests (\texttt{test\_environment.py}, \texttt{test\_learning.py}, \texttt{test\_showcase.py})\\
+\texttt{models/previous-runs/run3-pipeline-v3/} & final model: \texttt{showcase/best.pt}, held-out test reports
+(\texttt{test\_learned.json}, \texttt{summary.json}, \texttt{SUMMARY.md}) and the training history of the three stages\\
+\texttt{models/stageN-seedS/} & output of a training stage: \texttt{best.pt}, \texttt{latest.pt},
+\texttt{training.jsonl}, \texttt{evaluations.jsonl}, \texttt{config.json}, \texttt{finished.json}\\
+\texttt{docs/} & research plan, implementation contract and validation notes\\
+\texttt{Makefile} & shortcuts for installation, tests, training, evaluation and the viewer\\
+\texttt{Report/} & this report (LaTeX sources, figures and figure-generation scripts)\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section*{A.3 Reproducing the Results}
+The following commands, run from the project folder, install the environment, run the unit tests, open the
+flight laboratory with the final model, repeat the held-out evaluation and run the complete training pipeline.
+
+{\small
+\begin{verbatim}
+make install                  # create .venv with Python 3.12 (uv)
+make test                     # run the 40 unit tests
+MODEL=models/previous-runs/run3-pipeline-v3/showcase/best.pt
+
+# flight laboratory with the final model, then open http://127.0.0.1:8765
+.venv/bin/python -m swarmflow view --checkpoint $MODEL
+
+# held-out evaluation: 7 scenarios x 20 unseen seeds (100000-100019)
+.venv/bin/python -m swarmflow eval --policy learned --checkpoint $MODEL \
+    --scenarios hold follow turn gust crossing head_on double_crossing \
+    --seed-start 100000 --seeds 20 --output runs/heldout_learned.json
+
+# complete three-stage training pipeline followed by the held-out test
+caffeinate -i make training
+\end{verbatim}
+}
+
+\noindent An interrupted training run continues from its last checkpoint when the same command is repeated.
+
+\section*{A.4 Scenarios Available in the Environment}
+Besides the seven benchmark scenarios used for training and evaluation (hold, follow, turning target, wind gust,
+crossing, head-on and double crossing), the environment and the flight laboratory provide four further
+scenarios that are not part of the training curriculum: \emph{slalom} (three static spheres on the path),
+\emph{dense} (8--12 static spheres), \emph{pilot} (the user steers the reference target with the keyboard) and
+\emph{terrain following} (hilly ground). Four formation geometries (grid, circle, square, triangle), four worlds
+(empty, hills, canyon, pillars) and swarm sizes from 2 to 32 drones can be selected. These options are used for
+demonstration and are candidates for the generalisation studies listed in Section~\ref{sec:future}.
+
+\section*{A.5 Unit Tests}
+The 40 automated tests (all passing) verify the essential properties of the implementation:
+\begin{itemize}
+  \item \textbf{Environment:} PettingZoo parallel API; deterministic seeding and immutable slot identity; swept
+        collision detection of an object passing between two samples; acceleration limit and action validation;
+        time limit treated as truncation; sensing range, masks and dropout; recovery requiring every original
+        slot for the full hold time, including a second object inside the recovery window; object injection;
+        configuration validation; centred formation geometries; pilot steering and terrain contact.
+  \item \textbf{Learning:} GAE bootstrapping at time limits without crossing episode resets; policy invariance
+        to object order and padding; attention-encoder permutation invariance; checkpoint save, reload and resume;
+        best-checkpoint selection; imitation loss retained in resumed stages; failure penalty assigned to the
+        drones involved; 1\,m obstacle warning zone; bounded reward with failure always worse; separation of
+        critic and actor weights; state capture and restore used by collision-state replay.
+  \item \textbf{Showcase and viewer:} selection of the best run, held-out test report and live update of the
+        viewer when training saves a better model.
+\end{itemize}
+
+\section*{A.6 Figure Generation}
+All figures of Chapters~\ref{ch:introduction}--\ref{ch:results}, except the reproduced figure of
+Chapter~\ref{ch:literature}, are generated from the final model by the scripts in
+\url{Report/latex/figures/scripts/}: \texttt{record\_traces.py} records the final model on held-out seed
+100000; \texttt{make\_paper\_figures.py} renders the three-dimensional scenes, the observation illustration, the
+network and curriculum diagrams and the system overview; \texttt{make\_figures.py} plots the evaluation and
+training data; and \texttt{capture\_viewer.py} captures the flight-laboratory screenshots with the benchmark
+configuration.

@@ -1,0 +1,87 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+% ---------------------------------------------------------------- packages
+\usepackage[a4paper,left=1.15in,right=0.95in,top=0.9in,bottom=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,multirow,array}
+\usepackage{amsmath,bm}
+\usepackage[labelsep=colon,font=small,labelfont=bf]{caption}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage[titles]{tocloft}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{figures/}}
+\setstretch{1.1}
+\setlength{\parskip}{3pt}
+\setlength{\emergencystretch}{2.5em}
+\setlist{itemsep=2pt,topsep=4pt}
+\setlength{\textfloatsep}{16pt plus 4pt minus 2pt}
+\setlength{\floatsep}{14pt plus 4pt minus 2pt}
+\setlength{\intextsep}{14pt plus 4pt minus 2pt}
+\setlength{\abovecaptionskip}{8pt}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.12}
+\renewcommand{\floatpagefraction}{0.75}
+
+% ---------------------------------------------------------------- report details (edit here)
+\newcommand{\ReportTitle}{Reinforcement Learning for Swarm Technologies of Drone}
+\newcommand{\Supervisor}{Prof.\ Jyotsna Singh}
+\newcommand{\SupervisorDesignation}{Professor}
+\newcommand{\Department}{Department of Electronics and Communication Engineering}
+\newcommand{\Programme}{B.Tech.\ in Electronics \& Communication Engineering}
+\newcommand{\University}{Netaji Subhas University of Technology}
+\newcommand{\SubmissionMonth}{September 2026}
+
+% ---------------------------------------------------------------- chapter style as in the NSUT demo report
+\titleformat{\chapter}[display]{\normalfont\bfseries\centering}{\Large CHAPTER \thechapter}{6pt}{\LARGE\MakeUppercase}
+\titlespacing*{\chapter}{0pt}{-12pt}{16pt}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.8em}{}
+\titlespacing*{\section}{0pt}{14pt}{6pt}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftchappagefont}{\bfseries}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforechapskip}{1pt}
+\setlength{\cftbeforesecskip}{0pt}
+\setlength{\bibsep}{3pt}
+\renewcommand{\bibname}{Bibliography}
+\numberwithin{equation}{chapter}
+\setcounter{tocdepth}{1}
+
+% Version switch: define \WithoutLists before this file (see main_without_lists.tex) to omit the lists of
+% figures and tables and their entries in the table of contents.
+\newif\ifwithlists
+\ifdefined\WithoutLists \withlistsfalse \else \withliststrue \fi
+
+\begin{document}
+
+\input{chapters/00_front_matter}
+
+\clearpage
+\pagenumbering{arabic}
+\input{chapters/01_introduction}
+\input{chapters/02_literature_review}
+\input{chapters/03_methodology}
+\input{chapters/04_implementation}
+\input{chapters/05_results}
+\input{chapters/06_conclusion}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliography}
+{\small\setstretch{1.1}\bibliographystyle{unsrtnat}
+\bibliography{references/references}}
+
+\appendix
+\input{chapters/07_appendix}
+
+\end{document}

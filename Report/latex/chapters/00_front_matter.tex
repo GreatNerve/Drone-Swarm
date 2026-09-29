@@ -1,0 +1,176 @@
+% ================================================================ TITLE PAGE
+\begin{titlepage}
+\newgeometry{left=1in,right=1in,top=0.9in,bottom=0.9in}
+\centering
+\setstretch{1.15}
+{\Large\bfseries B.TECH.\ PROJECT ON\par}
+\vspace{0.7cm}
+{\huge\bfseries Reinforcement Learning for Swarm\\[4pt] Technologies of Drone\par}
+\vspace{1.0cm}
+{\large\itshape Submitted By\par}
+\vspace{0.3cm}
+{\large
+\begin{tabular}{l@{\hspace{1.2cm}}l}
+Nishant Raj    & 2023UEC2606\\
+Sumit Kumar    & 2023UEC2554\\
+Dheeraj Sharma & 2023UEC2599\\
+Tarun Kumar    & 2023UEC2551\\
+\end{tabular}\par}
+\vspace{0.9cm}
+{\large\itshape Under the Guidance of\par}
+\vspace{0.25cm}
+{\Large\bfseries \Supervisor\par}
+{\normalsize \SupervisorDesignation, \Department\par}
+\vfill
+\includegraphics[width=0.19\textwidth]{nsut_logo}\par
+\vfill
+{\normalsize Project-I in partial fulfillment of requirement for the award of\par}
+{\large\bfseries \Programme\par}
+\vspace{0.8cm}
+{\large\bfseries \Department\par}
+{\large\bfseries NETAJI SUBHAS UNIVERSITY OF TECHNOLOGY\par}
+{\large\bfseries NEW DELHI -- 110078\par}
+\vspace{0.5cm}
+{\large \SubmissionMonth\par}
+\restoregeometry
+\end{titlepage}
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+% ================================================================ CERTIFICATE
+\chapter*{CERTIFICATE}
+\addcontentsline{toc}{chapter}{Certificate}
+\begingroup
+\setstretch{1.6}
+\setlength{\parskip}{12pt}
+\sloppy
+\vspace*{0.6cm}
+
+Certified that \textbf{Nishant Raj (2023UEC2606)}, \textbf{Sumit Kumar (2023UEC2554)}, \textbf{Dheeraj Sharma
+(2023UEC2599)} and \textbf{Tarun Kumar (2023UEC2551)} have carried out their project work presented in this
+project entitled \textbf{``\ReportTitle''} for the award of Bachelor of Technology, \Department, \University,
+New Delhi, under my supervision.
+
+The project embodies results of original work, and studies are carried out by the students themselves, and the
+contents of the project do not form the basis for the award of any other degree to the candidates or to anybody
+else from this or any other University/Institution.
+
+\vfill
+\noindent
+\begin{minipage}[b]{0.45\textwidth}
+Place: New Delhi\\[10pt]
+Date: \rule{3.5cm}{0.4pt}
+\end{minipage}\hfill
+\begin{minipage}[b]{0.48\textwidth}
+\centering
+\rule{5.5cm}{0.4pt}\\[4pt]
+\textbf{\Supervisor}\\
+\SupervisorDesignation\\
+\Department\\
+\University, New Delhi
+\end{minipage}
+\vspace*{1.2cm}
+\endgroup
+
+% ================================================================ DECLARATION
+\chapter*{CANDIDATES' DECLARATION}
+\addcontentsline{toc}{chapter}{Candidates' Declaration}
+\begingroup
+\setstretch{1.6}
+\setlength{\parskip}{12pt}
+\vspace*{0.6cm}
+
+We hereby declare that the work presented in this project report entitled \textbf{``\ReportTitle''}, submitted
+in partial fulfillment of the requirement for the award of the degree of Bachelor of Technology in Electronics
+and Communication Engineering, \University, New Delhi, is an authentic record of our own work carried out under
+the guidance of \textbf{\Supervisor}.
+
+The matter embodied in this report has not been submitted by us for the award of any other degree. Wherever the
+work of others has been used, it has been duly acknowledged and cited.
+
+\vfill
+\noindent
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}cc}
+\rule{5cm}{0.4pt} & \rule{5cm}{0.4pt}\\
+\textbf{Nishant Raj} & \textbf{Sumit Kumar}\\
+2023UEC2606 & 2023UEC2554\\[1.6cm]
+\rule{5cm}{0.4pt} & \rule{5cm}{0.4pt}\\
+\textbf{Dheeraj Sharma} & \textbf{Tarun Kumar}\\
+2023UEC2599 & 2023UEC2551\\
+\end{tabular*}
+
+\vspace{1cm}
+\noindent Place: New Delhi \hfill Date: \rule{3.5cm}{0.4pt}
+\vspace*{1.2cm}
+\endgroup
+
+% ================================================================ ACKNOWLEDGEMENT
+\chapter*{ACKNOWLEDGEMENT}
+\addcontentsline{toc}{chapter}{Acknowledgement}
+\begingroup
+\setstretch{1.6}
+\setlength{\parskip}{12pt}
+\vspace*{0.6cm}
+
+We would like to express our gratitude and appreciation to all those who made it possible to complete this
+project.
+
+Special thanks to our project supervisor, \textbf{\Supervisor}, whose guidance, stimulating suggestions and
+encouragement helped us throughout the design, implementation and evaluation of this work.
+
+We also sincerely thank the \Department, \University, for providing the facilities and environment required
+for the project, and our colleagues for their valuable support and assistance throughout the project.
+
+\vfill
+\noindent
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}cc}
+\rule{5cm}{0.4pt} & \rule{5cm}{0.4pt}\\
+\textbf{Nishant Raj} & \textbf{Sumit Kumar}\\[1.6cm]
+\rule{5cm}{0.4pt} & \rule{5cm}{0.4pt}\\
+\textbf{Dheeraj Sharma} & \textbf{Tarun Kumar}\\
+\end{tabular*}
+\vspace*{1.2cm}
+\endgroup
+
+% ================================================================ ABSTRACT
+\chapter*{ABSTRACT}
+\addcontentsline{toc}{chapter}{Abstract}
+This work presents a reinforcement-learning system for the cooperative control of a drone swarm. Eight drones
+follow a moving reference target in a fixed formation; when a non-cooperative object crosses the flight path,
+the drones leave their formation slots, avoid the object and one another, and then return to \emph{their own}
+slots relative to the moving target. A single neural policy is shared by all drones and each drone executes it
+using only local observations of its own state, its six nearest neighbours and up to six nearby objects. The
+policy combines a self encoder with attention-based set encoders, so that it is independent of the order in
+which neighbours are observed, and outputs a desired three-dimensional velocity to a stabilised flight model.
+
+The environment is implemented as a PettingZoo multi-agent environment with continuous swept collision
+detection, a bounded per-drone reward and an explicit formation-recovery criterion. Training uses a three-stage
+curriculum: in each stage the policy is first initialised from demonstrations of a sampling-based
+model-predictive expert planner (noise-injected demonstrations followed by DAgger) and is then fine-tuned with
+proximal policy optimisation (PPO) and generalised advantage estimation, while the best checkpoint is selected on
+separate validation seeds.
+
+The final model was evaluated on 140 held-out episodes (seven scenarios $\times$ 20 unseen seeds). It completed
+138 episodes (98.6\%) without failure, achieved 100\% success in six of the seven scenarios, kept the
+undisturbed formation error below 5\,cm (0.023--0.045\,m) and returned every drone to its own slot after every
+disturbance in the completed episodes. A browser-based flight laboratory visualises the learned behaviour
+interactively.
+
+\vspace{0.5cm}
+\noindent\textbf{Keywords:} multi-agent reinforcement learning, drone swarm, formation control, collision
+avoidance, proximal policy optimisation, attention, imitation learning.
+
+% ================================================================ LISTS (each on its own page)
+\clearpage
+{\small\setstretch{0.97}\tableofcontents}
+\ifwithlists
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Figures}
+{\setstretch{1.1}\listoffigures}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Tables}
+{\setstretch{1.1}\listoftables}
+\fi

@@ -1,0 +1,51 @@
+{
+  "crossing": {
+    "failure": null,
+    "slot_rmse_m": 0.27619296427488393,
+    "min_surface_clearance_m": 0.29818242763053726,
+    "events": [
+      {
+        "name": "crossing-1",
+        "start_s": 5.077388487921098,
+        "clear_s": 11.736448835671727,
+        "measured_from_s": 11.736448835671727,
+        "recovery_s": 1.5135511643282733
+      }
+    ]
+  },
+  "head_on": {
+    "failure": null,
+    "slot_rmse_m": 0.2716680021687794,
+    "min_surface_clearance_m": 0.30090269767480415,
+    "events": [
+      {
+        "name": "head-on-1",
+        "start_s": 5.077388487921098,
+        "clear_s": 10.377390371730705,
+        "measured_from_s": 10.377390371730705,
+        "recovery_s": 1.6726096282692957
+      }
+    ]
+  },
+  "double_crossing": {
+    "failure": null,
+    "slot_rmse_m": 0.36309428417259826,
+    "min_surface_clearance_m": 0.29818242763053726,
+    "events": [
+      {
+        "name": "crossing-1",
+        "start_s": 5.077388487921098,
+        "clear_s": 11.736448835671727,
+        "measured_from_s": 11.736448835671727,
+        "recovery_s": 1.5135511643282733
+      },
+      {
+        "name": "crossing-2",
+        "start_s": 13.797772290382355,
+        "clear_s": 19.446644186548276,
+        "measured_from_s": 19.446644186548276,
+        "recovery_s": 2.0033558134517264
+      }
+    ]
+  }
+}

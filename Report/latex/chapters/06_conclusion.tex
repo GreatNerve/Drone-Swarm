@@ -1,0 +1,24 @@
+\chapter{Conclusion}
+\label{ch:conclusion}
+
+This project developed a reinforcement-learning system for the cooperative control of a drone swarm. The task
+required eight drones to follow a moving reference target in formation, to yield to non-cooperative objects
+crossing their path, and to return each drone to its own formation slot afterwards.
+
+The problem was formulated as a decentralised, partially observable multi-agent game in which every drone
+executes the same policy on local, relative observations. A PettingZoo environment with a stabilised flight
+model, continuous swept collision detection and a bounded per-drone reward was implemented. The policy combines
+a self encoder with masked multi-head attention over neighbours and objects, which makes it independent of the
+order of observed agents. It was trained with a three-stage curriculum in which each stage is initialised from
+expert demonstrations with DART and DAgger and then fine-tuned with PPO and GAE, and the best checkpoint is
+selected on validation seeds.
+
+On 140 held-out episodes the final model completed 98.6\% of the flights without failure, achieved 100\%
+success in six of the seven scenarios, kept the undisturbed formation error between 2.3 and 4.5\,cm and
+recovered every disturbance of the completed episodes. The learned behaviour is demonstrated in a browser-based
+flight laboratory in which objects can be injected during flight.
+
+The results show that a compact, laptop-scale learning pipeline can produce a decentralised swarm controller
+with measurable formation recovery. The next steps are the completion of the revised version-4 training, a
+larger clearance in the head-on case, evaluation with other swarm sizes and imperfect sensing, and validation in
+a full quadrotor physics simulator on the way to hardware experiments.
