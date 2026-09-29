@@ -1,6 +1,7 @@
 import json
 import math
 import os
+import shutil
 import time
 from collections import deque
 from pathlib import Path
@@ -225,6 +226,38 @@ def _clock(seconds):
     return f"{seconds // 3600}:{seconds % 3600 // 60:02d}:{seconds % 60:02d}"
 
 
+def atomic_replace(temp, path):
+    """Move temp onto path. On Windows the viewer/AV may hold path open for reading; os.replace then
+    fails with PermissionError, so fall back to overwriting the file contents in place."""
+    path = Path(path)
+    temp = Path(temp)
+    last = None
+    for delay in (0.0, 0.05, 0.1, 0.25, 0.5, 1.0):
+        if delay:
+            time.sleep(delay)
+        try:
+            os.replace(temp, path)
+            return
+        except PermissionError as error:
+            last = error
+    try:
+        shutil.copyfile(temp, path)
+        temp.unlink(missing_ok=True)
+    except OSError as error:
+        raise last or error
+
+
+def _stay_awake():
+    """Windows: request system-required while training (macOS users still use caffeinate -i)."""
+    if os.name != "nt":
+        return lambda: None
+    import ctypes
+    continuous, system = 0x80000000, 0x00000001
+    set_state = ctypes.windll.kernel32.SetThreadExecutionState
+    set_state(continuous | system)
+    return lambda: set_state(continuous)
+
+
 def train(config, scenarios, total_steps=10000, horizon=128, epochs=4, seed=0,
           output="runs/train", clone_steps=0, clone_epochs=15, resume=None, device="cpu",
           critic="local", failure_reset=False, envs=8, separate_critic=True, lr=3e-4, minibatch=1024,
@@ -359,7 +392,7 @@ def train(config, scenarios, total_steps=10000, horizon=128, epochs=4, seed=0,
         path.parent.mkdir(parents=True, exist_ok=True)
         temp = path.with_name(path.name + ".tmp")
         torch.save(data, temp)
-        temp.replace(path)
+        atomic_replace(temp, path)
 
     controller = ModelController(model, device)
 
@@ -395,6 +428,7 @@ def train(config, scenarios, total_steps=10000, horizon=128, epochs=4, seed=0,
 
     workers = []
     demo = None
+    release_awake = _stay_awake()
     try:
         if clone_steps:
             print(f"Behavior cloning on {', '.join(hyper['scenarios'])}: {dagger_rounds + 1} round(s) x "
@@ -591,6 +625,7 @@ def train(config, scenarios, total_steps=10000, horizon=128, epochs=4, seed=0,
               "validated one; finish the run with --continue.", flush=True)
         raise
     finally:
+        release_awake()
         for worker in workers:
             worker.env.close()
     return target / "latest.pt"

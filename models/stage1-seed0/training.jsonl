@@ -1,0 +1,1 @@
+{"type": "behavior_cloning", "round": 0, "driver": "teacher with action noise", "environment_steps": 10000, "agent_samples": 80000, "epochs": 15, "driver_episodes_finished": 20, "driver_failures": 0, "hard_state_share": 0.0374375, "final_epoch_mse": 0.0024354320927228354}

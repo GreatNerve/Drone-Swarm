@@ -6,7 +6,7 @@ from swarmflow import Config, SwarmEnv
 from swarmflow.env import FAILURE_PENALTY
 from swarmflow.scenarios import Obstacle
 from swarmflow.policy import ActorCritic, LearnedController, SetEncoder, stack_observations, tensors
-from swarmflow.train import advantages, train
+from swarmflow.train import advantages, atomic_replace, train
 
 
 def test_gae_bootstraps_truncation_without_crossing_reset():
@@ -244,3 +244,23 @@ def test_restore_state_returns_to_prior_time_and_positions():
     assert env.time == t0
     np.testing.assert_array_equal(env.positions, p0)
     assert env.agents and not env.collision and env.failure is None
+
+
+def test_atomic_replace_succeeds_while_destination_is_open(tmp_path):
+    """Viewer/AV holds latest.pt open on Windows; a plain Path.replace raises PermissionError."""
+    import os
+    path = tmp_path / "latest.pt"
+    torch.save({"n": 0}, path)
+    with open(path, "rb") as held:
+        held.read(64)
+        temp = path.with_name(path.name + ".tmp")
+        torch.save({"n": 1}, temp)
+        try:
+            temp.replace(path)
+            assert os.name != "nt", "expected Windows sharing violation on Path.replace while open"
+        except PermissionError:
+            assert os.name == "nt"
+        torch.save({"n": 2}, temp)
+        atomic_replace(temp, path)
+        assert not temp.exists()
+    assert torch.load(path, weights_only=True)["n"] == 2

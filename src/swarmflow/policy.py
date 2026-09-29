@@ -1,3 +1,4 @@
+import io
 import math
 from pathlib import Path
 import numpy as np
@@ -184,7 +185,8 @@ class ModelController:
 
 class LearnedController:
     def __init__(self, path):
-        data = torch.load(Path(path), map_location="cpu", weights_only=True)
+        # Read then close before unpickling so Windows training can replace the file (viewer reload).
+        data = torch.load(io.BytesIO(Path(path).read_bytes()), map_location="cpu", weights_only=True)
         if data.get("format") not in CHECKPOINT_FORMATS:
             raise ValueError("Unsupported checkpoint format")
         self.config = Config(**data["config"])
