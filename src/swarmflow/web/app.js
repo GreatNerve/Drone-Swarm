@@ -69,6 +69,7 @@ function accept(s) {
     $(id).disabled=resetting||!pilot||!s.running;
 }
 
+// Controller dropdown UI commented out for presentation; keep hints/sync for easy restore.
 const controllerHints={
   learned:'Neural network trained here with behavior cloning + PPO. Nothing else runs behind it.',
   baseline:'Hand-coded sampled predictive controller: the reference the network is compared with.',
@@ -76,12 +77,14 @@ const controllerHints={
 };
 let shownMode=null,shownCheckpoint=null;
 function syncController(s){
-  const select=$('controller'),learned=select.querySelector('option[value="learned"]');
-  learned.disabled=!s.learned_available;
-  learned.textContent=s.learned_available?'Learned policy (trained model)':'Learned policy (no trained model yet)';
-  if(s.mode!==shownMode){select.value=s.mode||'baseline';shownMode=s.mode;}
-  select.disabled=resetting;
-  $('controller-hint').textContent=controllerHints[s.mode]||'';
+  // Presentation: Controller <select> is commented out in index.html.
+  // const select=$('controller'),learned=select.querySelector('option[value="learned"]');
+  // learned.disabled=!s.learned_available;
+  // learned.textContent=s.learned_available?'Learned policy (trained model)':'Learned policy (no trained model yet)';
+  // if(s.mode!==shownMode){select.value=s.mode||'baseline';shownMode=s.mode;}
+  // select.disabled=resetting;
+  // $('controller-hint').textContent=controllerHints[s.mode]||'';
+  shownMode=s.mode||'baseline';
   $('learning-checkpoint').textContent=s.checkpoint||'';
   if(s.checkpoint!==shownCheckpoint){shownCheckpoint=s.checkpoint;if(modelReport)loadModel();}
 }
@@ -114,7 +117,9 @@ async function reset(start=false, continuous=false) {
   const spacing=Number($('compaction').value);
   const drones=parseInt($('drones').value,10);
   const seed=parseInt($('seed').value,10)||0;
-  const controller=$('controller').value;
+  // Presentation: Controller UI hidden; always use predictive baseline from the viewer controls.
+  // const controller=$('controller').value;
+  const controller='baseline';
   if(state)accept(state);
   try {
     notify('');
@@ -135,11 +140,11 @@ async function reset(start=false, continuous=false) {
     }
     playing=start;
     accept(s);
-  } catch(e) {notify(e.message);if(state)$('controller').value=state.mode;}
+  } catch(e) {notify(e.message);/* if(state)$('controller').value=state.mode; */}
   finally {resetting=false;if(state)accept(state);}
 }
 $('reset').onclick=()=>reset(false, false);
-$('controller').onchange=()=>reset(playing, playing);
+// $('controller').onchange=()=>reset(playing, playing);
 $('geometry').onchange=()=>reset(playing, playing);
 $('compaction').onchange=()=>reset(playing, playing);
 $('terrain').onchange=()=>reset(playing, playing);
@@ -564,10 +569,13 @@ setInterval(()=>{
   if(!playing&&!resetting)api('/api/state').then(accept).catch(()=>{});
 },10000);
 
-api('/api/state').then(s=>{
+api('/api/state').then(async s=>{
   $('scenario').value=s.scenario;$('drones').value=String(s.positions.length);$('seed').value=s.seed;
   if(s.geometry)$('geometry').value=s.geometry;
-  center=[s.target[0]-2,0,1.4];accept(s);
+  center=[s.target[0]-2,0,1.4];
+  // Presentation: force predictive baseline on load (server may start on learned if a checkpoint exists).
+  if(s.mode&&s.mode!=='baseline'){accept(s);await reset(false,false);}
+  else accept(s);
   loadTests();
   loadModel();
 }).catch(e=>notify(`Could not connect to the simulator: ${e.message}. Keep the Python server running and reload.`));
