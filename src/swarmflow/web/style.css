@@ -44,3 +44,6 @@ button.chip:hover{border-color:var(--accent);color:var(--accent);background:none
 .progress{height:6px;background:#1b262d;border-radius:3px;overflow:hidden;margin:4px 0 10px}.progress span{display:block;height:100%;width:0;background:var(--accent);transition:width .6s}
 .training-text{margin:0;font:11px/1.6 ui-monospace,monospace;color:var(--muted);word-break:break-word}
 @media(max-width:1050px){.model-grid,.model-charts{grid-template-columns:1fr}}
+
+/* Presentation: elements with this class stay in the code but are not shown. Remove the class to show them again. */
+.presentation-hidden{display:none !important}
