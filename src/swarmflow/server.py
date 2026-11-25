@@ -14,8 +14,8 @@ from .env import SwarmEnv
 from .scenarios import SCENARIOS
 
 
-CONTROLLER_LABELS = {"learned": "learned checkpoint", "baseline": "predictive baseline",
-                     "slot": "slot-only (no avoidance)"}
+CONTROLLER_LABELS = {"learned": "learned checkpoint", "filtered": "learned checkpoint + safety filter",
+                     "baseline": "predictive baseline", "slot": "slot-only (no avoidance)"}
 
 
 def _load(path):
@@ -29,8 +29,10 @@ def _stamp(path):
     return str(path), os.path.getmtime(path)
 
 
-def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="models", interval=5.0):
-    """With follow=True the viewer keeps switching to the best model under models_dir as training saves it."""
+def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="models", interval=5.0,
+                safety_filter=False):
+    """With follow=True the viewer keeps switching to the best model under models_dir as training saves it.
+    With safety_filter the learned policy starts behind the safety filter (mode "filtered")."""
     state = {"learned": None, "checkpoint": None, "stamp": None, "seed": 7}
     if checkpoint:
         state.update(learned=_load(checkpoint), checkpoint=str(checkpoint), stamp=_stamp(checkpoint))
@@ -40,9 +42,12 @@ def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="mo
     def controller_for(mode, cfg):
         if mode == "learned":
             return state["learned"]
+        if mode == "filtered":
+            from .shield import SafetyFilter
+            return SafetyFilter(state["learned"], cfg)
         return SlotController(cfg) if mode == "slot" else PredictiveController(cfg)
 
-    initial = "learned" if state["learned"] else "baseline"
+    initial = ("filtered" if safety_filter else "learned") if state["learned"] else "baseline"
     state.update(env=SwarmEnv(config), controller=controller_for(initial, config), mode=initial,
                  policy=CONTROLLER_LABELS[initial])
     state["env"].reset(seed=7)
@@ -64,7 +69,9 @@ def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="mo
             with lock:
                 first = state["learned"] is None
                 state.update(learned=fresh, checkpoint=str(found), stamp=stamp)
-                if state["mode"] == "learned" or (first and state["mode"] == "baseline"):
+                if state["mode"] == "filtered":
+                    state.update(controller=controller_for("filtered", state["env"].config))
+                elif state["mode"] == "learned" or (first and state["mode"] == "baseline"):
                     state.update(controller=fresh, mode="learned", policy=CONTROLLER_LABELS["learned"])
             print(f"Viewer now uses {found}", flush=True)
 
@@ -168,8 +175,8 @@ def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="mo
                             raise ValueError("duration must be between 1 and 7200 seconds")
                         controller = data.get("controller", state["mode"])
                         if controller not in CONTROLLER_LABELS:
-                            raise ValueError("controller must be 'learned', 'baseline' or 'slot'")
-                        if controller == "learned" and not state["learned"]:
+                            raise ValueError("controller must be 'learned', 'filtered', 'baseline' or 'slot'")
+                        if controller in ("learned", "filtered") and not state["learned"]:
                             raise ValueError("No trained policy is loaded; train one (make training) or "
                                              "start the viewer with --checkpoint")
                         sensing = {}
@@ -217,11 +224,11 @@ def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="mo
     return ThreadingHTTPServer(("127.0.0.1", port), Handler)
 
 
-def serve(config, port=8765, checkpoint=None, follow=False):
-    server = make_server(config, port, checkpoint, follow)
+def serve(config, port=8765, checkpoint=None, follow=False, safety_filter=False):
+    server = make_server(config, port, checkpoint, follow, safety_filter=safety_filter)
     print(f"SwarmFlow: http://127.0.0.1:{server.server_port} (Ctrl+C to stop)", flush=True)
-    print(f"Controller: {'learned checkpoint ' + str(checkpoint) if checkpoint else 'predictive baseline'}",
-          flush=True)
+    label = "learned checkpoint" + (" + safety filter" if safety_filter else "")
+    print(f"Controller: {label + ' ' + str(checkpoint) if checkpoint else 'predictive baseline'}", flush=True)
     if follow:
         print("Following models/: the viewer switches to each new best model automatically", flush=True)
     try:

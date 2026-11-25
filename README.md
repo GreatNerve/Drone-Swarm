@@ -23,10 +23,13 @@ Then open [http://127.0.0.1:8765](http://127.0.0.1:8765). The viewer automatical
 **To train the model yourself, follow [guide.md](guide.md)**; the whole curriculum is one command:
 
 ```sh
-caffeinate -i make training        # stage 1 -> 2 -> 3 (about 3.5 h), then the held-out showcase test
-caffeinate -i make run train       # the same, with the viewer open: live progress, then the best model
+make training                      # stage 1 -> 2 -> 3 (about 4 h), the held-out showcase test, then quantization
+make run train                     # the same, with the viewer open: live progress, then the best model
+make status                        # where training stands; Ctrl+C any time, the same command continues exactly
 make run                           # viewer with the best model and its "Did the model learn correctly?" panel
 ```
+
+Training can be stopped with Ctrl+C and continued with the same command as often as you like (train an hour, test, train another hour), works the same on macOS, Windows and Linux, and keeps the computer awake by itself. After training, `models/showcase/quantized/` holds fp32 / fp16 / int8 copies of the model with an accuracy and size report (`make quantize` to rebuild with other presets). The showcase also reports the model behind an optional safety filter, separately from the policy alone. See [guide.md](guide.md) sections 2, 4 and 5.
 
 [training.md](training.md) explains the training method, the code, and why the earlier 2–5 minute runs did not learn. Use `make help` to list all commands. Extra baseline eval targets: `eval-heldout` (seeds 100000+), `eval-noisy`, `eval-dense`.
 
@@ -90,8 +93,8 @@ Step-by-step commands are in **[guide.md](guide.md)**; the method, the code walk
 ```sh
 make test                          # unit tests
 make train-smoke                   # about 1 min; checks the machinery only, not the task
-caffeinate -i make training        # full curriculum for seed 0, then models/showcase (re-run to continue after an interruption)
-caffeinate -i make run train       # the same with the live viewer (python -m swarmflow pipeline --view)
+make training                      # full curriculum for seed 0, then models/showcase (re-run to continue after a stop)
+make run train                     # the same with the live viewer (python -m swarmflow pipeline --view)
 make train-full-multi              # seeds 0 1 2; the showcase keeps the best seed
 make train-stage1                  # or one stage at a time (train-stage2, train-stage3, continue-stageN, eval-stageN)
 make showcase                      # choose the best run, test it on held-out seeds, store it in models/showcase
@@ -105,6 +108,8 @@ Each stage writes `models/stageN-seedS/` with `best.pt` (best validated checkpoi
 - `src/swarmflow/baseline.py`: predictive and slot-only controllers.
 - `src/swarmflow/policy.py`, `train.py`, `evaluate.py`: learning and measurement.
 - `src/swarmflow/curriculum.py`: training stages, the resumable pipeline, and the showcase (best model + held-out test).
+- `src/swarmflow/shield.py`, `quantize.py`: the optional safety filter and the post-training quantization.
+- `src/swarmflow/files.py`, `awake.py`: crash-safe checkpoint and log files on every OS, and keeping the computer awake.
 - `src/swarmflow/server.py`, `web/`: local interactive viewer; no JavaScript build system or external CDN required.
 - `tests/`: behavior and algorithm regression checks.
 - `guide.md`, `training.md`: how to train, and how the training works.

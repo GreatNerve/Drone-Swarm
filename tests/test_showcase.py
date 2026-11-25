@@ -24,12 +24,15 @@ def test_showcase_selects_best_run_and_viewer_reports_it(tmp_path):
     runs = [_tiny_run(models, 0), _tiny_run(models, 1)]
     assert sorted(trained_runs(models)) == sorted(runs)
     summary = build_showcase(None, models / "showcase", test_seeds=1, scenarios=("hold", "follow"))
-    scores = {str(run): json.loads((run / "best.json").read_text())["score"] for run in runs}
+    scores = {run.as_posix(): json.loads((run / "best.json").read_text())["score"] for run in runs}
     assert summary["validation_score"] == max(scores.values())
     assert summary["selected_run"] in scores
     assert summary["test_seeds"] == [100000, 100000]
     assert [row["scenario"] for row in summary["scenarios"]] == ["hold", "follow"]
     assert isinstance(summary["learned_correctly"], bool)
+    assert isinstance(summary["learned_correctly_with_filter"], bool)
+    assert 0 <= summary["safety_filter"]["intervention_share"] <= 1
+    assert "learned_with_filter" in summary["scenarios"][0]
     assert default_model(models) == models / "showcase" / "best.pt"
     assert (models / "showcase" / "SUMMARY.md").exists()
 

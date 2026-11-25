@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 
 from .config import Config
+from .files import read_json, rename_with_retry, write_json_atomic
 
 TESTS_DIR = Path("runs/tests")
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -146,7 +147,7 @@ def _train_or_reuse(folder, options, **train_args):
         return checkpoint, True
     if checkpoint.exists():
         archived = folder.with_name(f"{folder.name}-old-{datetime.now():%Y%m%d-%H%M%S}")
-        folder.rename(archived)
+        rename_with_retry(folder, archived)
         print(f"Moved previous run to {archived}", flush=True)
     train(Config(), output=str(folder), seed=options.seed, **train_args)
     return checkpoint, False
@@ -283,7 +284,7 @@ def catalog():
     for test in TESTS:
         saved = _folder(test, Options()) / "result.json"
         try:
-            last = json.loads(saved.read_text())
+            last = read_json(saved)
         except (OSError, json.JSONDecodeError):
             last = None
         rows.append({"number": test.number, "slug": test.slug, "title": test.title, "purpose": test.purpose,
@@ -351,9 +352,9 @@ def run_tests(selection, options):
         if result.report:
             print(f"  report: {result.report}")
         results.append((test, result, elapsed))
-        (folder / "result.json").write_text(json.dumps({
+        write_json_atomic(folder / "result.json", {
             "test": test.number, "verdict": result.verdict, "notes": result.notes, "report": result.report,
-            "elapsed_s": round(elapsed, 1), "finished": datetime.now().isoformat(timespec="seconds")}, indent=2) + "\n")
+            "elapsed_s": round(elapsed, 1), "finished": datetime.now().isoformat(timespec="seconds")})
     print("\n=== Summary ===")
     for test, result, elapsed in results:
         print(f"  {test.number:>2}. {test.title:<40s} {result.verdict:<6s} {elapsed:>6.0f} s")

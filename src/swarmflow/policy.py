@@ -7,9 +7,12 @@ from torch.distributions import Normal
 from torch.nn import functional as F
 
 from .config import Config
+from .files import load_torch
 
 CHECKPOINT_FORMATS = ("swarmflow-v1", "swarmflow-v2", "swarmflow-v3", "swarmflow-v4")
 CHECKPOINT_FORMAT = "swarmflow-v4"
+# Deployment files from `swarmflow quantize`: the actor alone, at a chosen precision.
+ACTOR_FORMAT = "swarmflow-v4-actor"
 OBSERVATION_KEYS = ("self", "neighbors", "obstacles")
 DRONE_RADIUS_M = Config().radius
 
@@ -169,6 +172,19 @@ class ActorCritic(Encoder):
         return self.log_probability(distribution, raw), distribution.entropy().sum(-1), value
 
 
+class ActorOnly(Encoder):
+    """The deployed part of ActorCritic: encoder and action head, without critic or exploration noise."""
+
+    def __init__(self, width=64, gap_features=False, **_):
+        super().__init__(width, gap_features)
+        self.width = width
+        self.gap_features = gap_features
+        self.actor = nn.Linear(width, 3)
+
+    def act(self, observation):
+        return self.actor(self.encode(observation)).tanh()
+
+
 class ModelController:
     """Drives a team with the deterministic policy of an in-memory model."""
 
@@ -184,7 +200,14 @@ class ModelController:
 
 class LearnedController:
     def __init__(self, path):
-        data = torch.load(Path(path), map_location="cpu", weights_only=True)
+        data = load_torch(Path(path))
+        if data.get("format") == ACTOR_FORMAT:
+            from .quantize import load_actor
+            self.model = load_actor(data)
+            self.config = Config(**data["config"])
+            self.metadata = {k: v for k, v in data.items() if k not in ("weights", "scales")}
+            self.controller = ModelController(self.model)
+            return
         if data.get("format") not in CHECKPOINT_FORMATS:
             raise ValueError("Unsupported checkpoint format")
         self.config = Config(**data["config"])

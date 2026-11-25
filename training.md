@@ -1,12 +1,12 @@
 # How SwarmFlow trains its drone policy
 
-> **Current version: 4.** After the first full training run, stages 2 and 3 were fixed (**Part C**). After the second run, the teacher was made more cautious and slalom was removed (**Part D**). After the third run, the teacher margin was widened, recovery is counted after overlapping objects, and PPO in stages 2–3 was shortened (**Part E**, at the end). Where a later part differs from an earlier one, the later part is current. Compared with the first sections, the main differences are:
+> **Current version: 5.** After the first full training run, stages 2 and 3 were fixed (**Part C**). After the second run, the teacher was made more cautious and slalom was removed (**Part D**). After the third run, the teacher margin was widened, recovery is counted after overlapping objects, and PPO in stages 2–3 was shortened (**Part E**). Version 5 (**Part F**, at the end) makes long runs crash-proof on every OS, lets you stop and continue training exactly, chooses `best.pt` by a clearance-aware score on 20 seeds, and adds the optional safety filter and post-training quantization. Where a later part differs from an earlier one, the later part is current. Compared with the first sections, the main differences are:
 > - cloning in every stage, with a teacher that keeps 0.3–0.7 m clearance;
 > - an imitation loss inside PPO whose weight goes from 1.0 to 0.5;
 > - an exploration floor, a per-drone crash penalty and a 1 m obstacle warning;
 > - a wider network;
 > - 7 scenarios instead of 8 (no slalom);
-> - 1M PPO steps in stages 2 and 3, for a total time of about 3.5 h.
+> - 1M PPO steps in stages 2 and 3, for a total time of about 3.5–4 h that can be split over several sessions.
 
 This document explains what the training does, why the old training finished in 2–5 minutes without learning, what was changed (and which research each change comes from), and how every part of the code works. It is written for preparing the presentation. The practical "which command do I run" steps are in [guide.md](guide.md).
 
@@ -28,14 +28,15 @@ This document explains what the training does, why the old training finished in 
 
 ```sh
 make test                          # once: all unit tests must pass
-caffeinate -i make training        # full training in the terminal (python -m swarmflow pipeline)
-caffeinate -i make run train       # the same training, plus the viewer with live progress (python -m swarmflow pipeline --view)
+make training                      # full training in the terminal (python -m swarmflow pipeline)
+make run train                     # the same training, plus the viewer with live progress (python -m swarmflow pipeline --view)
+make status                        # how far each stage got, and how to test it (python -m swarmflow status)
 make run                           # afterwards: viewer with the best model (python -m swarmflow view)
 ```
 
-- **Order**: both training commands run stage 1 → 2 → 3, then the showcase test.
+- **Order**: both training commands run stage 1 → 2 → 3, then the showcase test and the quantization.
 - **Results**: each stage is stored in `models/stageN-seedS/`, and the chosen best model goes to `models/showcase/best.pt`, which the viewer uses.
-- **Interruptions**: if training stops, run the same command again and it continues.
+- **Interruptions**: Ctrl+C stops after the current update; run the same command again and it continues exactly there (Part F, section 37).
 
 [guide.md](guide.md) has the details, the folder layout and a **Do and don't** list (section 6). The most important don'ts:
 
@@ -1076,3 +1077,68 @@ All 40 unit tests pass. A tiny end-to-end version 4 run (stage 1 → 2 → 3 →
 - Wołczyk et al., *Fine-tuning Reinforcement Learning Models is Secretly a Forgetting Mitigation Problem* (ICML 2024): why RL fine-tuning of a pre-trained policy can lose what it knew. <https://arxiv.org/abs/2402.02868>
 - Ross, Gordon & Bagnell, *DAgger* (AISTATS 2011): <https://arxiv.org/abs/1011.0686>
 - Huang et al., *Collision Avoidance and Navigation for a Quadrotor Swarm Using End-to-end Deep Reinforcement Learning* (ICRA 2024): <https://arxiv.org/abs/2309.13285>
+
+---
+
+# Part F: training version 5 (robust runs, exact resume, safety filter, quantization) — current
+
+## 37. Long runs that cannot be lost
+
+No traceback of the failure "after about 6 hours" was kept. Run 1's stage 3 shows where such a run died: it reached its full 2,501,760 steps, but neither the final validation nor `finished.json` was written. Every code path that could end a multi-hour run that way was removed:
+
+| Risk | Fix | Code |
+| --- | --- | --- |
+| `latest.pt` / `best.pt` replaced while another program (the viewer, antivirus, indexer, cloud sync) holds it open: an instant `PermissionError` on Windows, about 1,000 times per run | Every replace and rename retries for up to 60 s; a `latest.pt` that still cannot be saved only prints a warning (the next update saves again); a locked `best.pt` stays in memory and is saved later | `files.replace_with_retry`, `train.save_latest`, `train.write_best` |
+| One non-finite minibatch stopped the whole run | The minibatch is skipped; a mostly non-finite update is rolled back with half the learning rate; only 3 bad updates in a row stop it, with `latest.pt` still valid | `train.train` (PPO update) |
+| NaN in a log row (`allow_nan=False`) raised `ValueError` | NaN and infinity are written as `null` | `files.sanitize` |
+| `best.json`, `config.json`, `finished.json` half-written by a kill | Written atomically (temporary file, then replace) | `files.write_json_atomic` |
+| A partial last log line hid every later row | The partial line is closed off, unreadable lines are skipped, and rows written after the last checkpoint are dropped on continue | `files.append_jsonl`, `files.read_jsonl`, `train._trim_logs` |
+| Paths written on Windows broke the history chain on a Mac | Paths are stored with `/` and read back with either separator | `files.portable_path`, `files.local_path` |
+| Unicode output crashed a redirected Windows console | Unencodable characters are replaced | `cli._safe_output` |
+| The laptop sleeping during a run (`caffeinate` is Mac-only) | Sleep is blocked on macOS, Windows and Linux while training runs (`--allow-sleep` to disable) | `awake.keep_awake` |
+| The viewer read `best.pt` every 10 s | It reads the bytes once per file version and holds the file for milliseconds | `curriculum.checkpoint_metadata`, `files.load_torch` |
+
+## 38. Stop and continue exactly
+
+- **Ctrl+C once** finishes the current PPO update (or cloning round), saves and stops; a second Ctrl+C stops at once. Ctrl+Break works the same on Windows.
+- `latest.pt` now also holds the run's progress: phase (cloning or PPO), cloning rounds done, update/episode/crash counters, recent episodes, training time, best score, the validation schedule, the NumPy and torch random states, the reward scaler's running returns and the cloning optimizer.
+- Cloning is checkpointed after every round, with that round's teacher data in `teacher-data/roundK.pt` (deleted when the stage finishes). A continued run reuses exactly this data for the imitation loss instead of collecting a different set, and a stop during cloning continues at the next round instead of restarting the stage.
+- Validation runs at fixed steps from the stage start (100k, 200k, ...), whatever the stops; a validation that was due when the run stopped runs first; the start validation is not repeated.
+- The same command continues: `make training` / `python -m swarmflow pipeline`, and now also `make train-stageN` / `train --stage N`. `swarmflow status` shows each stage and the commands to test it.
+- Checked on Windows with real processes: a Ctrl+Break mid-PPO, a hard kill one update later, and a third run to the end gave one log row per update, cloning rounds 0, 1, 2 once each and validations exactly at 2,048 / 4,096 / 6,144 steps, while another thread kept the checkpoints open 477 times and the viewer polled the model every 0.2 s (`tests/test_resume.py` covers the same cases).
+
+## 39. Choosing best.pt by safety margin
+
+Run 3's chosen model kept only 0.049 m in head-on on the selection seeds and grazed twice on the test. Validation now scores `checkpoint_score = selection_score − 0.5 × mean(max(0, 0.15 m − minimum clearance))` over the scenarios with moving objects, on **20** seeds per scenario (was 10). The reported test score is still `selection_score`, so it stays comparable with runs 1–3. Evaluation rows also record `plain_score` and `min_obstacle_clearance_m`.
+
+## 40. The direction experiment (development seeds 1000–1019, no test seeds)
+
+Stage 3 cloning was repeated from run 3's stage 2 model (cloning only, as in section 34) and the result flown on 7 scenarios × 20 development seeds:
+
+| Model | Failures | Recovered within 5 s | Lowest head-on clearance | 5th-percentile clearance (obstacle scenarios) |
+| --- | --- | --- | --- | --- |
+| Run 3's showcase model | 1/140 (head-on) | 79/80 | −0.003 m | – |
+| v4 cloning recipe (3 DAgger rounds) | 1/140 (head-on, seed 1009) | 79/80 | −0.032 m | 0.082 m |
+| v4 recipe **with the safety filter** | **0/140** | **80/80** | +0.065 m | 0.093 m |
+| Run 3's showcase model with the safety filter (crossing, head-on, double crossing) | 0/60 | – | +0.079 m | – |
+
+The same picture as Part E: the policy alone repeatedly ends one graze short of the zero-failure check, and the filter removes it while taking over only 0.04–0.06% of drone decisions. A 5-round DAgger recipe with near-object states sampled 3× as often (`--dagger-rounds 5 --hard-weight 3`) was still running when this was written (its result goes to `no-push/local/experiments/direction-v5.json`); until it shows a clear gain, the pipeline keeps 3 rounds.
+
+## 41. The safety filter (opt-in, reported separately)
+
+`shield.SafetyFilter` wraps any controller. Each drone's commanded velocity is rolled out 1 s ahead with the same response model the teacher plans with, against every sensed neighbour and object at constant velocity; if the predicted surface gap drops below 0.1 m, that drone flies the predictive baseline for 0.5 s. This is shielding (Alshiekh et al., *Safe Reinforcement Learning via Shielding*, AAAI 2018). The showcase tests the policy alone (`learned_correctly`, the verdict) and, separately, the policy with the filter (`learned_correctly_with_filter` and the share of drone decisions it took over). Present the second as "policy + safety layer", never as what the network learned. Around the no-avoidance controller the filter turned 6/6 certain collisions into safe flights, and it never intervenes in an undisturbed flight.
+
+## 42. Post-training quantization
+
+`swarmflow quantize` (run automatically after the showcase) keeps only the actor and writes each preset to `models/showcase/quantized/<preset>/model.pt` with `QUANTIZATION.md`. Run 3's showcase model on development seeds 1000–1019:
+
+| Preset | Size | Largest action change | Failures | Recovered within 5 s |
+| --- | --- | --- | --- | --- |
+| original checkpoint | 6,720 KB | – | 1/140 | 79/80 |
+| fp32 (actor only) | 1,121 KB (16.7%) | 0 | 1/140 | 79/80 |
+| fp16 | 566 KB (8.4%) | 0.0004 | 1/140 | 79/80 |
+| int8 (per channel, float compute) | 306 KB (4.6%) | 0.012 | 2/140 | 77/80 |
+| int8-dynamic (onednn INT8 kernels) | 306 KB (4.6%) | 0.047 | 2/140 | 77/80 |
+| int8-per-tensor | 299 KB (4.4%) | 0.012 | 1/140 | 78/80 |
+
+fp16 is free (identical flights at half the size); 8-bit weights cost about one more graze on these seeds, because the policy already flies with centimetres to spare in head-on. For this small network the INT8 kernels are slower than float on a laptop CPU (2.4 vs 1.1 ms per team step) and less exact, since they also quantize each layer's input; they are kept as the `int8-dynamic` preset for hardware where INT8 kernels pay off. PyTorch has deprecated its quantized tensors, so INT8 weights are stored as plain tensors and the files load (and fall back to float compute) on any PyTorch release and device.

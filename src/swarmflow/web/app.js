@@ -72,6 +72,7 @@ function accept(s) {
 // Controller dropdown UI commented out for presentation; keep hints/sync for easy restore.
 const controllerHints={
   learned:'Neural network trained here with behavior cloning + PPO. Nothing else runs behind it.',
+  filtered:'The same network behind the safety filter: a drone predicted within 0.1 m of contact flies the baseline for 0.5 s.',
   baseline:'Hand-coded sampled predictive controller: the reference the network is compared with.',
   slot:'Ablation that flies to its slot and ignores obstacles, showing the obstacles are a real threat.'
 };
@@ -493,6 +494,11 @@ function renderModel(){
   add('Warm start',cloning.length?`behavior cloning from the predictive controller, ${cloning.length} round(s) incl. DAgger, ${count(cloning[cloning.length-1].agent_samples)} labelled samples`:'none: PPO from random weights');
   if(r.selection)add('Chosen checkpoint',`step ${count(r.selection.environment_steps)} · validation score ${num(r.selection.score)} · success ${pct(r.selection.success_rate)} · slot RMSE ${num(r.selection.mean_slot_rmse_m)} m`);
   if(test)add('Held-out test score',`learned ${num(test.test_score_learned)}  vs  baseline ${num(test.test_score_baseline)}`);
+  if(test&&test.learned_correctly_with_filter!==undefined){
+    const f=test.safety_filter||{};
+    add('With safety filter',`${test.learned_correctly_with_filter?'LEARNED CORRECTLY':'NOT LEARNED YET'} · the teacher took over ${f.intervention_share===null||f.intervention_share===undefined?'—':(f.intervention_share*100).toFixed(3)+'%'} of drone decisions (predicted gap below ${num(f.margin_m)} m within ${num(f.horizon_s)} s). This is the policy plus a safety layer; the verdict above is the policy alone.`);
+  }
+  if(r.precision)add('Precision',`${r.precision} actor-only model (quantized from a full checkpoint)`);
   if(test)for(const c of test.checks){
     const li=el('li',c.passed?'pass':'fail');
     li.append(el('b','',c.passed?'PASS':'FAIL'),el('span','',c.name),el('small','',c.detail));checks.append(li);

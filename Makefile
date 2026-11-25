@@ -1,7 +1,7 @@
 # train-stageN, continue-stageN and test-N are pattern rules; listing them in .PHONY would disable them.
 .PHONY: help install run view view-best view-baseline test tests test-list eval train training run-train \
 	train-full train-full-multi train-smoke eval-smoke eval-stage1 eval-stage2 eval-stage3 \
-	showcase view-learned eval-heldout eval-noisy eval-dense
+	showcase view-learned eval-heldout eval-noisy eval-dense status quantize eval-filter view-filter
 
 PYTHON := $(shell if [ -x .venv/bin/python ]; then echo .venv/bin/python; \
 	elif [ -x .venv/Scripts/python.exe ]; then echo .venv/Scripts/python.exe; \
@@ -11,16 +11,24 @@ MODELS := models
 SEED ?= 0
 SEEDS ?= 0 1 2
 SEEDS_N ?= 20
+PY_VERSION ?= 3.12
+VARIANTS ?= fp32 fp16 int8 int8-dynamic
 
 help:
 	@echo "SwarmFlow commands (see guide.md):"
-	@echo "  make training             Full training: stage 1 -> 2 -> 3 for SEED=$(SEED), then store the best"
-	@echo "                            model in models/showcase (re-run to continue after an interruption)"
+	@echo "  make training             Full training: stage 1 -> 2 -> 3 for SEED=$(SEED), the best model in"
+	@echo "                            models/showcase, then its quantized copies. Ctrl+C stops after the"
+	@echo "                            current update; run the same command again to continue exactly there"
 	@echo "  make run train            Same training, plus the viewer: live progress, then the best model"
 	@echo "                            (same as make run-train)"
+	@echo "  make status               Where every training run stands, and how to continue or test it"
 	@echo "  make run                  Start the viewer (uses the best model under models/ automatically)"
 	@echo ""
-	@echo "  make install              Install/update the Python environment"
+	@echo "  make quantize             Small actor-only models of models/showcase/best.pt (VARIANTS=\"$(VARIANTS)\")"
+	@echo "  make eval-filter          Showcase model behind the safety filter on 20 development seeds"
+	@echo "  make view-filter          Viewer with the showcase model behind the safety filter"
+	@echo ""
+	@echo "  make install              Install/update the Python environment (PY_VERSION=$(PY_VERSION))"
 	@echo "  make view-baseline        Start the viewer without any trained model"
 	@echo "  make test                 Run the unit tests"
 	@echo "  make tests                Pick which numbered validation tests to run (menu)"
@@ -41,7 +49,7 @@ help:
 	@echo "  make eval-dense           Baseline eval on the dense sphere scenario"
 
 install:
-	uv sync --python 3.12 --extra dev --cache-dir .uv-cache
+	uv sync --python $(PY_VERSION) --extra dev --cache-dir .uv-cache
 
 # `make run train` must train with the viewer open instead of starting the viewer and then training.
 RUN_AND_TRAIN := $(and $(filter run,$(MAKECMDGOALS)),$(filter train training,$(MAKECMDGOALS)))
@@ -117,6 +125,21 @@ eval-stage3:
 
 showcase:
 	$(PYTHON) -m swarmflow showcase
+
+status:
+	$(PYTHON) -m swarmflow status
+
+quantize:
+	$(PYTHON) -m swarmflow quantize --variants $(VARIANTS)
+
+eval-filter:
+	$(PYTHON) -m swarmflow eval --policy learned --safety-filter \
+		--checkpoint $(MODELS)/showcase/best.pt \
+		--scenarios hold follow crossing head_on double_crossing turn gust --seeds $(SEEDS_N) \
+		--output $(MODELS)/showcase/dev-evaluation-filter.json
+
+view-filter:
+	$(PYTHON) -m swarmflow view --safety-filter --checkpoint $(MODELS)/showcase/best.pt
 
 train-smoke:
 	$(PYTHON) -m swarmflow train \
