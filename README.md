@@ -102,6 +102,18 @@ make showcase                      # choose the best run, test it on held-out se
 
 Each stage writes `models/stageN-seedS/` with `best.pt` (best validated checkpoint), `latest.pt` (for continuing), logs and settings; the next stage starts from the previous stage's `best.pt`. PPO's reported `steps` count environment advances summed over the 8 parallel environments; multiply by the drone count for agent transitions. Default training is **parameter-sharing IPPO with a separate local critic**; use `--critic central` for a MAPPO-style value head and `--failure-reset` for pre-collision restores. Checkpoints from before this pipeline (`swarmflow-v1/v2` in `runs/`) can still be viewed but not resumed.
 
+## Swarm-V2 (in progress)
+
+`src/swarmv2/` is the next-generation rebuild described in `no-push/plan.md`: a batched PyTorch 6-DoF simulator with terrain, wind and downwash, a mode-conditioned attention policy, a toggleable safety shield and an asynchronous reasoning layer, built phase by phase behind measured exit gates. `src/swarmflow/` (everything above) stays unchanged as the v1 baseline; v2 never imports it.
+
+Phase 0 (current) provides the package scaffold, the evaluation harness (95% intervals, tilt jitter, wind tracking error, reasoning transitions) and a zero-build 3D viewer (vendored three.js, no CDN) showing a scripted 8-drone swarm over procedural terrain with wind arrows and a mock reasoning trace. There is no physics yet.
+
+```sh
+python -m swarmv2 view --demo      # http://127.0.0.1:8770   (make v2-view)
+python -m swarmv2 info             # Python, PyTorch and compute device (make v2-info)
+python -m pytest -q tests/v2       # make v2-test
+```
+
 ## Files
 
 - `src/swarmflow/env.py`, `scenarios.py`, `config.py`: environment, scenarios and experiment contract.

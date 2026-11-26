@@ -1,7 +1,8 @@
 # train-stageN, continue-stageN and test-N are pattern rules; listing them in .PHONY would disable them.
 .PHONY: help install run view view-best view-baseline test tests test-list eval train training run-train \
 	train-full train-full-multi train-smoke eval-smoke eval-stage1 eval-stage2 eval-stage3 \
-	showcase view-learned eval-heldout eval-noisy eval-dense status quantize eval-filter view-filter
+	showcase view-learned eval-heldout eval-noisy eval-dense status quantize eval-filter view-filter \
+	v2-test v2-view v2-info
 
 PYTHON := $(shell if [ -x .venv/bin/python ]; then echo .venv/bin/python; \
 	elif [ -x .venv/Scripts/python.exe ]; then echo .venv/Scripts/python.exe; \
@@ -140,6 +141,16 @@ eval-filter:
 
 view-filter:
 	$(PYTHON) -m swarmflow view --safety-filter --checkpoint $(MODELS)/showcase/best.pt
+
+# Swarm-V2 (no-push/plan.md); phase 0: scaffold, 3D viewer demo and evaluation harness.
+v2-test:
+	$(PYTHON) -m pytest -q tests/v2
+
+v2-view:
+	$(PYTHON) -m swarmv2 view --demo
+
+v2-info:
+	$(PYTHON) -m swarmv2 info
 
 train-smoke:
 	$(PYTHON) -m swarmflow train \

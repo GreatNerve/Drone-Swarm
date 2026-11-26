@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Swarm-V2 viewer</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="stage">
+      <canvas id="view" aria-label="3D view of the drone swarm over terrain"></canvas>
+      <div class="hud" id="hud" aria-live="polite">
+        <div><span>FPS</span><strong id="fps">-</strong></div>
+        <div><span>Time</span><strong id="clock">-</strong></div>
+        <div><span>Region</span><strong id="region">-</strong></div>
+        <div><span>Mode</span><strong id="mode">-</strong></div>
+        <div><span>Formation</span><strong id="formation">-</strong></div>
+        <div><span>Alpha</span><strong id="alpha">-</strong></div>
+        <div><span>Wind</span><strong id="wind">-</strong></div>
+        <div><span>Tilt mean / max</span><strong id="tilt">-</strong></div>
+        <div><span>Speed / AGL</span><strong id="speed">-</strong></div>
+      </div>
+      <p class="badge" id="badge">Phase 0 demo: scripted poses, no physics</p>
+    </section>
+    <aside class="panel">
+      <header>
+        <p class="eyebrow">SWARM-V2 · PHASE 0</p>
+        <h1>6-DoF swarm viewer</h1>
+      </header>
+      <div class="controls">
+        <label for="seed">Seed</label>
+        <input id="seed" type="number" min="0" value="1000">
+        <label for="formation-select">Start formation</label>
+        <select id="formation-select">
+          <option>DIAMOND</option><option>COLUMN</option><option>V_SHAPE</option><option>LINE</option>
+        </select>
+        <div class="buttons">
+          <button id="reset" type="button">Reset</button>
+          <button id="pause" type="button">Pause</button>
+        </div>
+        <label class="check"><input id="follow" type="checkbox" checked> Follow the swarm</label>
+        <label class="check"><input id="arrows" type="checkbox" checked> Wind arrows</label>
+        <label class="check"><input id="ghosts" type="checkbox" checked> Slot ghosts</label>
+      </div>
+      <section class="trace">
+        <h2>Layer 3 reasoning trace</h2>
+        <p class="hint">Mock planner decisions every 1.5 s, after the deterministic verifier. Clamped fields and faults are marked.</p>
+        <ol id="trace" reversed></ol>
+      </section>
+      <p class="hint">Drag to orbit, right-drag to pan, wheel to zoom.</p>
+    </aside>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

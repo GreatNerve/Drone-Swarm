@@ -14,12 +14,14 @@ dev = ["pytest>=8,<9"]
 
 [project.scripts]
 swarmflow = "swarmflow.cli:main"
+swarmv2 = "swarmv2.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
 swarmflow = ["web/*.html", "web/*.js", "web/*.css"]
+swarmv2 = ["viewer/web/*.html", "viewer/web/*.js", "viewer/web/*.css", "viewer/web/vendor/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
