@@ -1,0 +1,2735 @@
+{
+  "model": "3D stabilized flight; bounded acceleration and finite velocity response",
+  "policy": "learned",
+  "checkpoint": "models\\showcase\\quantized\\fp32\\model.pt",
+  "safety_filter": null,
+  "config": {
+    "drones": 8,
+    "dt": 0.05,
+    "substeps": 5,
+    "duration": 24.0,
+    "radius": 0.18,
+    "spacing": 1.25,
+    "altitude": 3.0,
+    "stand_off": 3.0,
+    "max_speed": 3.0,
+    "max_accel": 5.0,
+    "response_time": 0.28,
+    "target_speed": 0.55,
+    "sensor_range": 7.0,
+    "neighbors": 6,
+    "obstacles": 6,
+    "noise": 0.0,
+    "dropout": 0.0,
+    "recovery_position": 0.35,
+    "recovery_velocity": 0.35,
+    "recovery_hold": 1.0,
+    "rays": 0,
+    "ray_range": 5.0,
+    "geometry": "grid",
+    "world": "empty"
+  },
+  "summary": {
+    "hold": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.02985739102998916,
+      "slot_rmse_std_m": 0.0006880639114007624,
+      "slot_rmse_ci95_m": {
+        "low": 0.029555833724952886,
+        "high": 0.030158948335025436
+      },
+      "min_surface_clearance_m": 0.7553210835304,
+      "events": 0,
+      "recovered_events": 0,
+      "mean_recovery_s_conditional": null,
+      "max_recovery_s_conditional": null
+    },
+    "follow": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.029153583977872967,
+      "slot_rmse_std_m": 0.0008257666803731142,
+      "slot_rmse_ci95_m": {
+        "low": 0.028791675773422717,
+        "high": 0.029515492182323216
+      },
+      "min_surface_clearance_m": 0.7553210835304,
+      "events": 0,
+      "recovered_events": 0,
+      "mean_recovery_s_conditional": null,
+      "max_recovery_s_conditional": null
+    },
+    "crossing": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.2739308035869775,
+      "slot_rmse_std_m": 0.02130781866038284,
+      "slot_rmse_ci95_m": {
+        "low": 0.26459224031551404,
+        "high": 0.283269366858441
+      },
+      "min_surface_clearance_m": 0.09896853314618848,
+      "events": 20,
+      "recovered_events": 20,
+      "mean_recovery_s_conditional": 1.5509060966903225,
+      "max_recovery_s_conditional": 2.930829193970066
+    },
+    "head_on": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.2947129898971175,
+      "slot_rmse_std_m": 0.02345676490460549,
+      "slot_rmse_ci95_m": {
+        "low": 0.2844326094087674,
+        "high": 0.30499337038546764
+      },
+      "min_surface_clearance_m": 0.038738436699543355,
+      "events": 20,
+      "recovered_events": 20,
+      "mean_recovery_s_conditional": 2.715210528767514,
+      "max_recovery_s_conditional": 3.833501996733096
+    },
+    "double_crossing": {
+      "episodes": 20,
+      "failures": 1,
+      "collisions": 1,
+      "success_rate": 0.95,
+      "mean_slot_rmse_m": 0.4353061247120843,
+      "slot_rmse_std_m": 0.04538450157129351,
+      "slot_rmse_ci95_m": {
+        "low": 0.4154154899069661,
+        "high": 0.4551967595172025
+      },
+      "min_surface_clearance_m": -0.011381679502219133,
+      "events": 40,
+      "recovered_events": 36,
+      "mean_recovery_s_conditional": 2.588815345248614,
+      "max_recovery_s_conditional": 5.247381626273722
+    },
+    "turn": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.04242220815288857,
+      "slot_rmse_std_m": 0.00045485147856267477,
+      "slot_rmse_ci95_m": {
+        "low": 0.04222286070304502,
+        "high": 0.04262155560273213
+      },
+      "min_surface_clearance_m": 0.7553210835304,
+      "events": 0,
+      "recovered_events": 0,
+      "mean_recovery_s_conditional": null,
+      "max_recovery_s_conditional": null
+    },
+    "gust": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.18515521197423654,
+      "slot_rmse_std_m": 0.00012947064240954623,
+      "slot_rmse_ci95_m": {
+        "low": 0.18509846896336296,
+        "high": 0.18521195498511012
+      },
+      "min_surface_clearance_m": 0.7553210835304,
+      "events": 0,
+      "recovered_events": 0,
+      "mean_recovery_s_conditional": null,
+      "max_recovery_s_conditional": null
+    }
+  },
+  "episodes": [
+    {
+      "scenario": "hold",
+      "seed": 1000,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.780876209935823,
+      "slot_rmse_m": 0.029910674648756404,
+      "centroid_rmse_m": 0.01881242047672163,
+      "command_derivative_rms_m_s2": 0.033505758250409065,
+      "mean_return": 23.9783493405037,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1001,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8347963318614086,
+      "slot_rmse_m": 0.030631618032680313,
+      "centroid_rmse_m": 0.01924392371129742,
+      "command_derivative_rms_m_s2": 0.04947329643558632,
+      "mean_return": 23.97709322584012,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1002,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7553210835304,
+      "slot_rmse_m": 0.030328137821421304,
+      "centroid_rmse_m": 0.018552676022386815,
+      "command_derivative_rms_m_s2": 0.04288841388565004,
+      "mean_return": 23.977660451694092,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1003,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.847185721883733,
+      "slot_rmse_m": 0.02980796375343356,
+      "centroid_rmse_m": 0.01764458318078105,
+      "command_derivative_rms_m_s2": 0.044750032959017104,
+      "mean_return": 23.97838343595555,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1004,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8423248235908262,
+      "slot_rmse_m": 0.030530270866198042,
+      "centroid_rmse_m": 0.01817403870927523,
+      "command_derivative_rms_m_s2": 0.041215001176657724,
+      "mean_return": 23.977359373375148,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1005,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8017455694618728,
+      "slot_rmse_m": 0.030619487118184765,
+      "centroid_rmse_m": 0.019406166697997527,
+      "command_derivative_rms_m_s2": 0.04382652911052089,
+      "mean_return": 23.97721036928727,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1006,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8291186028334355,
+      "slot_rmse_m": 0.029907731578058854,
+      "centroid_rmse_m": 0.018888739133056116,
+      "command_derivative_rms_m_s2": 0.03829735234005458,
+      "mean_return": 23.978321139346903,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1007,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8381273499339502,
+      "slot_rmse_m": 0.029342215763478292,
+      "centroid_rmse_m": 0.017725813670207053,
+      "command_derivative_rms_m_s2": 0.042851813953520494,
+      "mean_return": 23.979075643559042,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1008,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7614297498656436,
+      "slot_rmse_m": 0.030245112610995512,
+      "centroid_rmse_m": 0.01805957081513919,
+      "command_derivative_rms_m_s2": 0.04276647522314542,
+      "mean_return": 23.977796954763356,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1009,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8010792836062072,
+      "slot_rmse_m": 0.030611128200809867,
+      "centroid_rmse_m": 0.01946491394661475,
+      "command_derivative_rms_m_s2": 0.04007466996419334,
+      "mean_return": 23.977263480624934,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1010,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7584172247063251,
+      "slot_rmse_m": 0.030952810764178374,
+      "centroid_rmse_m": 0.0175337646195806,
+      "command_derivative_rms_m_s2": 0.057370606836966966,
+      "mean_return": 23.976552380556058,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1011,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8261484063543872,
+      "slot_rmse_m": 0.030458394752545765,
+      "centroid_rmse_m": 0.018731751793694924,
+      "command_derivative_rms_m_s2": 0.04216210541627286,
+      "mean_return": 23.97746208059195,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1012,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8135823814243156,
+      "slot_rmse_m": 0.029257192634767816,
+      "centroid_rmse_m": 0.017708579139056588,
+      "command_derivative_rms_m_s2": 0.03929019074050566,
+      "mean_return": 23.97924281272504,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1013,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8395118534798084,
+      "slot_rmse_m": 0.02899653301220579,
+      "centroid_rmse_m": 0.01804890843135187,
+      "command_derivative_rms_m_s2": 0.043786035720821105,
+      "mean_return": 23.979524036289963,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1014,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7989181832398061,
+      "slot_rmse_m": 0.028479587046995374,
+      "centroid_rmse_m": 0.01767378128888758,
+      "command_derivative_rms_m_s2": 0.04246500906311041,
+      "mean_return": 23.980284404379326,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1015,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7876345675381474,
+      "slot_rmse_m": 0.02962855921178538,
+      "centroid_rmse_m": 0.017940418516805567,
+      "command_derivative_rms_m_s2": 0.04042566193487238,
+      "mean_return": 23.978686587730543,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1016,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7957731282715709,
+      "slot_rmse_m": 0.02941282061657542,
+      "centroid_rmse_m": 0.017638317821852236,
+      "command_derivative_rms_m_s2": 0.042537224332050795,
+      "mean_return": 23.9789702666968,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1017,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7849587379177895,
+      "slot_rmse_m": 0.029532235830460364,
+      "centroid_rmse_m": 0.017689078943796177,
+      "command_derivative_rms_m_s2": 0.05022469425022883,
+      "mean_return": 23.978712595225428,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1018,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7887581234540318,
+      "slot_rmse_m": 0.028753255952821365,
+      "centroid_rmse_m": 0.017504262123245292,
+      "command_derivative_rms_m_s2": 0.03792750966480757,
+      "mean_return": 23.979948180450403,
+      "events": []
+    },
+    {
+      "scenario": "hold",
+      "seed": 1019,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8004634676397834,
+      "slot_rmse_m": 0.029742090383430564,
+      "centroid_rmse_m": 0.017638301678812984,
+      "command_derivative_rms_m_s2": 0.0477283700127304,
+      "mean_return": 23.97844227190312,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1000,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.780876209935823,
+      "slot_rmse_m": 0.029042463775462667,
+      "centroid_rmse_m": 0.02059843046864036,
+      "command_derivative_rms_m_s2": 0.03105446842151914,
+      "mean_return": 23.943290615728355,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1001,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8347963318614086,
+      "slot_rmse_m": 0.030242461334992084,
+      "centroid_rmse_m": 0.02137120726207644,
+      "command_derivative_rms_m_s2": 0.0477152958652902,
+      "mean_return": 23.94149811535606,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1002,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7553210835304,
+      "slot_rmse_m": 0.0299512930985685,
+      "centroid_rmse_m": 0.02081429944956333,
+      "command_derivative_rms_m_s2": 0.040766669072717185,
+      "mean_return": 23.94188225116639,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1003,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.847185721883733,
+      "slot_rmse_m": 0.028915153412995824,
+      "centroid_rmse_m": 0.019531038333672115,
+      "command_derivative_rms_m_s2": 0.04166511260137772,
+      "mean_return": 23.943474466198793,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1004,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8423248235908262,
+      "slot_rmse_m": 0.02989567219646632,
+      "centroid_rmse_m": 0.019924578799329424,
+      "command_derivative_rms_m_s2": 0.039579427633101384,
+      "mean_return": 23.942078692858647,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1005,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8017455694618728,
+      "slot_rmse_m": 0.02951004396509234,
+      "centroid_rmse_m": 0.020890423515419164,
+      "command_derivative_rms_m_s2": 0.0433440413628602,
+      "mean_return": 23.94257071107985,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1006,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8291186028334355,
+      "slot_rmse_m": 0.029091284965994224,
+      "centroid_rmse_m": 0.02060192653202256,
+      "command_derivative_rms_m_s2": 0.03580397480504963,
+      "mean_return": 23.943176223406308,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1007,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8381273499339502,
+      "slot_rmse_m": 0.02845331284278238,
+      "centroid_rmse_m": 0.019565589370290303,
+      "command_derivative_rms_m_s2": 0.03971005576894997,
+      "mean_return": 23.94410799664955,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1008,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7614297498656436,
+      "slot_rmse_m": 0.029566803361111355,
+      "centroid_rmse_m": 0.019793373032924715,
+      "command_derivative_rms_m_s2": 0.037341164898858886,
+      "mean_return": 23.942613664298158,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1009,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8010792836062072,
+      "slot_rmse_m": 0.029966958770057485,
+      "centroid_rmse_m": 0.02121141799050341,
+      "command_derivative_rms_m_s2": 0.03826381972287989,
+      "mean_return": 23.941920559466382,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1010,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7584172247063251,
+      "slot_rmse_m": 0.030518913430119986,
+      "centroid_rmse_m": 0.01947426522320519,
+      "command_derivative_rms_m_s2": 0.05275831869273995,
+      "mean_return": 23.941044265640834,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1011,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8261484063543872,
+      "slot_rmse_m": 0.030132529620030775,
+      "centroid_rmse_m": 0.020869631343073125,
+      "command_derivative_rms_m_s2": 0.03813368805743771,
+      "mean_return": 23.94174910257994,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1012,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8135823814243156,
+      "slot_rmse_m": 0.028214947756185563,
+      "centroid_rmse_m": 0.01950913048423993,
+      "command_derivative_rms_m_s2": 0.03876313624282068,
+      "mean_return": 23.944466569783927,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1013,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8395118534798084,
+      "slot_rmse_m": 0.027970520772946646,
+      "centroid_rmse_m": 0.01968816788984562,
+      "command_derivative_rms_m_s2": 0.043572545635452625,
+      "mean_return": 23.94480707236025,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1014,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7989181832398061,
+      "slot_rmse_m": 0.027523469535827308,
+      "centroid_rmse_m": 0.01958486982787201,
+      "command_derivative_rms_m_s2": 0.043951914839887044,
+      "mean_return": 23.94536585120483,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1015,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7876345675381474,
+      "slot_rmse_m": 0.0290002482577885,
+      "centroid_rmse_m": 0.01988986550684218,
+      "command_derivative_rms_m_s2": 0.03960478196120802,
+      "mean_return": 23.94335344499749,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1016,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7957731282715709,
+      "slot_rmse_m": 0.028544136511347625,
+      "centroid_rmse_m": 0.019412319609320237,
+      "command_derivative_rms_m_s2": 0.04233793833679171,
+      "mean_return": 23.944027353778466,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1017,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7849587379177895,
+      "slot_rmse_m": 0.029048468163931543,
+      "centroid_rmse_m": 0.020034372938754097,
+      "command_derivative_rms_m_s2": 0.0503042364050535,
+      "mean_return": 23.943187821255755,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1018,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7887581234540318,
+      "slot_rmse_m": 0.02821502076932867,
+      "centroid_rmse_m": 0.01956338187894202,
+      "command_derivative_rms_m_s2": 0.035052558251918144,
+      "mean_return": 23.944505249237686,
+      "events": []
+    },
+    {
+      "scenario": "follow",
+      "seed": 1019,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8004634676397834,
+      "slot_rmse_m": 0.02926797701642949,
+      "centroid_rmse_m": 0.01965007813983108,
+      "command_derivative_rms_m_s2": 0.044126892203971806,
+      "mean_return": 23.94294884590347,
+      "events": []
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1000,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.27205624469778644,
+      "slot_rmse_m": 0.2709198763652056,
+      "centroid_rmse_m": 0.1352224891826744,
+      "command_derivative_rms_m_s2": 0.4689260193585259,
+      "mean_return": 21.537399781099037,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.0437830227615112,
+          "clear_s": 9.485029075525084,
+          "measured_from_s": 9.485029075525084,
+          "recovery_s": 2.314970924474917
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1001,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.369869627699288,
+      "slot_rmse_m": 0.27583844604799573,
+      "centroid_rmse_m": 0.1208236889557528,
+      "command_derivative_rms_m_s2": 0.6108665831890399,
+      "mean_return": 21.53054309483204,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.223100233044093,
+          "clear_s": 11.752149628470129,
+          "measured_from_s": 11.752149628470129,
+          "recovery_s": 1.9478503715298725
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1002,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.4239139177439216,
+      "slot_rmse_m": 0.26874133216321144,
+      "centroid_rmse_m": 0.09563512718514243,
+      "command_derivative_rms_m_s2": 0.4681363848543323,
+      "mean_return": 21.6092657855038,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.187395527816872,
+          "clear_s": 10.282091681651291,
+          "measured_from_s": 10.282091681651291,
+          "recovery_s": 1.0179083183487094
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1003,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.46394129689679897,
+      "slot_rmse_m": 0.25299113411325436,
+      "centroid_rmse_m": 0.08660236084301998,
+      "command_derivative_rms_m_s2": 0.4792644216489078,
+      "mean_return": 21.86564571692962,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.19352916445864,
+          "clear_s": 10.433190469587508,
+          "measured_from_s": 10.433190469587508,
+          "recovery_s": 1.4168095304124932
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1004,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2913857027160829,
+      "slot_rmse_m": 0.28903984170898755,
+      "centroid_rmse_m": 0.1252200242963029,
+      "command_derivative_rms_m_s2": 0.5491192801025031,
+      "mean_return": 21.309300695907044,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.089662738603072,
+          "clear_s": 9.0737203831514,
+          "measured_from_s": 9.0737203831514,
+          "recovery_s": 2.4262796168486
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1005,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.37176802910752904,
+      "slot_rmse_m": 0.25900975364900464,
+      "centroid_rmse_m": 0.1177800467272401,
+      "command_derivative_rms_m_s2": 0.4711318733585092,
+      "mean_return": 21.72683233958361,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.13841393584665,
+          "clear_s": 9.230729191416781,
+          "measured_from_s": 9.230729191416781,
+          "recovery_s": 1.0192708085832187
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1006,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.4215159925389764,
+      "slot_rmse_m": 0.255485352242126,
+      "centroid_rmse_m": 0.10475767073087912,
+      "command_derivative_rms_m_s2": 0.4656504313918759,
+      "mean_return": 21.810437471658062,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.251238932386182,
+          "clear_s": 11.225519185021444,
+          "measured_from_s": 11.225519185021444,
+          "recovery_s": 1.4244808149785566
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1007,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.4074082915974184,
+      "slot_rmse_m": 0.24440049086664875,
+      "centroid_rmse_m": 0.10457225796842935,
+      "command_derivative_rms_m_s2": 0.49420300258910577,
+      "mean_return": 21.98336354036948,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.8747620217830265,
+          "clear_s": 10.769202928145791,
+          "measured_from_s": 10.769202928145791,
+          "recovery_s": 1.0307970718542094
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1008,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.3645765533465005,
+      "slot_rmse_m": 0.2669837174796084,
+      "centroid_rmse_m": 0.09893456322692086,
+      "command_derivative_rms_m_s2": 0.4986809843556728,
+      "mean_return": 21.683235770249468,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.8721869996422806,
+          "clear_s": 10.921314758708482,
+          "measured_from_s": 10.921314758708482,
+          "recovery_s": 1.4786852412915188
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1009,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.37716855362434143,
+      "slot_rmse_m": 0.2744594191803697,
+      "centroid_rmse_m": 0.1254253822559594,
+      "command_derivative_rms_m_s2": 0.4270341416378231,
+      "mean_return": 21.464784377094,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.075823450505657,
+          "clear_s": 10.656916132210675,
+          "measured_from_s": 10.656916132210675,
+          "recovery_s": 1.043083867789326
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1010,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.40026813418235385,
+      "slot_rmse_m": 0.27271622177007304,
+      "centroid_rmse_m": 0.11391278207187534,
+      "command_derivative_rms_m_s2": 0.5290765656490012,
+      "mean_return": 21.556290488281725,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.809658296171144,
+          "clear_s": 10.45337011295234,
+          "measured_from_s": 10.45337011295234,
+          "recovery_s": 1.396629887047661
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1011,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.38597961633249545,
+      "slot_rmse_m": 0.28265301090045725,
+      "centroid_rmse_m": 0.09987581038202739,
+      "command_derivative_rms_m_s2": 0.45813939015986727,
+      "mean_return": 21.404588052760616,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.9454272062661007,
+          "clear_s": 10.976106855265666,
+          "measured_from_s": 10.976106855265666,
+          "recovery_s": 1.223893144734335
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1012,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.24176078482461094,
+      "slot_rmse_m": 0.3465833826244366,
+      "centroid_rmse_m": 0.1467444067331654,
+      "command_derivative_rms_m_s2": 0.5343339897522086,
+      "mean_return": 20.38764607964664,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.009013039170833,
+          "clear_s": 11.517584505416554,
+          "measured_from_s": 11.517584505416554,
+          "recovery_s": 2.2824154945834465
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1013,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.37265008678889167,
+      "slot_rmse_m": 0.2847103561605956,
+      "centroid_rmse_m": 0.13465096171216126,
+      "command_derivative_rms_m_s2": 0.5099708909304208,
+      "mean_return": 21.376397871149248,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.070277750702367,
+          "clear_s": 10.95128489419474,
+          "measured_from_s": 10.95128489419474,
+          "recovery_s": 1.1487151058052607
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1014,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.42451725137512764,
+      "slot_rmse_m": 0.2656159914281722,
+      "centroid_rmse_m": 0.09416487794789351,
+      "command_derivative_rms_m_s2": 0.47056800302612795,
+      "mean_return": 21.633704768604613,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.412831605115466,
+          "clear_s": 12.542472042208338,
+          "measured_from_s": 12.542472042208338,
+          "recovery_s": 1.0075279577916625
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1015,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2936042860826902,
+      "slot_rmse_m": 0.26157242878755893,
+      "centroid_rmse_m": 0.12658757258918552,
+      "command_derivative_rms_m_s2": 0.5132479877222647,
+      "mean_return": 21.743936746635118,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.423071064275752,
+          "clear_s": 11.455160819088553,
+          "measured_from_s": 11.455160819088553,
+          "recovery_s": 2.1448391809114487
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1016,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.3610689843545427,
+      "slot_rmse_m": 0.2747747313767029,
+      "centroid_rmse_m": 0.13149491368056695,
+      "command_derivative_rms_m_s2": 0.5556702059462629,
+      "mean_return": 21.541431183388262,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.922482560131727,
+          "clear_s": 9.493840910287219,
+          "measured_from_s": 9.493840910287219,
+          "recovery_s": 1.1561590897127818
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1017,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.3996445340905914,
+      "slot_rmse_m": 0.26905388757897497,
+      "centroid_rmse_m": 0.11217531234397905,
+      "command_derivative_rms_m_s2": 0.5281162150314472,
+      "mean_return": 21.604255947572824,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.373063664618757,
+          "clear_s": 10.96884004957464,
+          "measured_from_s": 10.96884004957464,
+          "recovery_s": 1.4311599504253607
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1018,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.4164944735465367,
+      "slot_rmse_m": 0.2641769284645213,
+      "centroid_rmse_m": 0.09143567158669894,
+      "command_derivative_rms_m_s2": 0.4789861887982681,
+      "mean_return": 21.651495820694578,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.978393596585043,
+          "clear_s": 10.724183637286993,
+          "measured_from_s": 10.724183637286993,
+          "recovery_s": 1.1758163627130074
+        }
+      ]
+    },
+    {
+      "scenario": "crossing",
+      "seed": 1019,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.09896853314618848,
+      "slot_rmse_m": 0.29888976883164436,
+      "centroid_rmse_m": 0.13017852923207807,
+      "command_derivative_rms_m_s2": 0.5857114358925339,
+      "mean_return": 21.178024494428595,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.970611027397273,
+          "clear_s": 10.569170806029934,
+          "measured_from_s": 10.569170806029934,
+          "recovery_s": 2.930829193970066
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1000,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.23339072530219085,
+      "slot_rmse_m": 0.2985476311664252,
+      "centroid_rmse_m": 0.12830148559913881,
+      "command_derivative_rms_m_s2": 0.5348971015740435,
+      "mean_return": 21.231297039583495,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 3.0437830227615112,
+          "clear_s": 8.26187320025344,
+          "measured_from_s": 8.26187320025344,
+          "recovery_s": 2.73812679974656
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1001,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2831202873408256,
+      "slot_rmse_m": 0.28303254660158245,
+      "centroid_rmse_m": 0.12097195810887182,
+      "command_derivative_rms_m_s2": 0.5220955198474846,
+      "mean_return": 21.457071328316154,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 5.223100233044093,
+          "clear_s": 10.34601081636043,
+          "measured_from_s": 10.34601081636043,
+          "recovery_s": 2.5539891836395707
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1002,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.29135498395610593,
+      "slot_rmse_m": 0.27991853412147083,
+      "centroid_rmse_m": 0.11579833130559708,
+      "command_derivative_rms_m_s2": 0.5541483155182568,
+      "mean_return": 21.59516107725851,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 3.187395527816872,
+          "clear_s": 8.094704661662963,
+          "measured_from_s": 8.094704661662963,
+          "recovery_s": 2.7552953383370387
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1003,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2554700934872626,
+      "slot_rmse_m": 0.2912975899358733,
+      "centroid_rmse_m": 0.12249858316369346,
+      "command_derivative_rms_m_s2": 0.5802152587620261,
+      "mean_return": 21.288895787943908,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 4.19352916445864,
+          "clear_s": 8.986075637226843,
+          "measured_from_s": 8.986075637226843,
+          "recovery_s": 2.7639243627731567
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1004,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.11288470159230557,
+      "slot_rmse_m": 0.32068217661679044,
+      "centroid_rmse_m": 0.12920857615037262,
+      "command_derivative_rms_m_s2": 0.6231639286513259,
+      "mean_return": 20.915120078915372,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 3.089662738603072,
+          "clear_s": 7.818084805325254,
+          "measured_from_s": 7.818084805325254,
+          "recovery_s": 3.1319151946747468
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1005,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.16921230360084405,
+      "slot_rmse_m": 0.31581279052029426,
+      "centroid_rmse_m": 0.12717788265312105,
+      "command_derivative_rms_m_s2": 0.6228906696759098,
+      "mean_return": 21.007483642895988,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 3.13841393584665,
+          "clear_s": 7.797420827785514,
+          "measured_from_s": 7.797420827785514,
+          "recovery_s": 3.0525791722144877
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1006,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.29797716377891825,
+      "slot_rmse_m": 0.27767357369337725,
+      "centroid_rmse_m": 0.11471034446082587,
+      "command_derivative_rms_m_s2": 0.5217503867855695,
+      "mean_return": 21.570793706432966,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 4.251238932386182,
+          "clear_s": 9.505548056663082,
+          "measured_from_s": 9.505548056663082,
+          "recovery_s": 2.594451943336919
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1007,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2173333716348772,
+      "slot_rmse_m": 0.29732009446514707,
+      "centroid_rmse_m": 0.128464301860165,
+      "command_derivative_rms_m_s2": 0.6554364257985217,
+      "mean_return": 21.088239307227372,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 4.8747620217830265,
+          "clear_s": 9.536756753248444,
+          "measured_from_s": 9.536756753248444,
+          "recovery_s": 2.813243246751558
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1008,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.21729369467738646,
+      "slot_rmse_m": 0.2860625284517569,
+      "centroid_rmse_m": 0.11905607615027168,
+      "command_derivative_rms_m_s2": 0.5377085151321176,
+      "mean_return": 21.422318174632448,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 3.8721869996422806,
+          "clear_s": 9.158657423045366,
+          "measured_from_s": 9.158657423045366,
+          "recovery_s": 2.7413425769546347
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1009,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2882257071164064,
+      "slot_rmse_m": 0.2656521296884868,
+      "centroid_rmse_m": 0.11810999762230312,
+      "command_derivative_rms_m_s2": 0.582405881575959,
+      "mean_return": 21.73397197740954,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 4.075823450505657,
+          "clear_s": 8.673475036000347,
+          "measured_from_s": 8.673475036000347,
+          "recovery_s": 2.1265249639996533
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1010,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2848977670001813,
+      "slot_rmse_m": 0.2830172512101456,
+      "centroid_rmse_m": 0.11953536821440733,
+      "command_derivative_rms_m_s2": 0.5297228121696781,
+      "mean_return": 21.481509824239915,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 3.809658296171144,
+          "clear_s": 8.903324684195864,
+          "measured_from_s": 8.903324684195864,
+          "recovery_s": 2.6466753158041367
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1011,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2989689744515729,
+      "slot_rmse_m": 0.31872850288644067,
+      "centroid_rmse_m": 0.14128847759299346,
+      "command_derivative_rms_m_s2": 0.588083895967645,
+      "mean_return": 21.156232009859956,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 3.9454272062661007,
+          "clear_s": 8.803410199080787,
+          "measured_from_s": 8.803410199080787,
+          "recovery_s": 3.496589800919214
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1012,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.40850911930439926,
+      "slot_rmse_m": 0.2606451671753043,
+      "centroid_rmse_m": 0.09336948585268687,
+      "command_derivative_rms_m_s2": 0.511033906818817,
+      "mean_return": 21.78629483621899,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 5.009013039170833,
+          "clear_s": 10.21444211344419,
+          "measured_from_s": 10.21444211344419,
+          "recovery_s": 1.0355578865558108
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1013,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.17858506980766897,
+      "slot_rmse_m": 0.2861465703579395,
+      "centroid_rmse_m": 0.11526423807860701,
+      "command_derivative_rms_m_s2": 0.6075140706267419,
+      "mean_return": 21.324558818121357,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 5.070277750702367,
+          "clear_s": 9.626711885893613,
+          "measured_from_s": 9.626711885893613,
+          "recovery_s": 1.9732881141063885
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1014,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.30603332245929027,
+      "slot_rmse_m": 0.2759519412047454,
+      "centroid_rmse_m": 0.1143318846034547,
+      "command_derivative_rms_m_s2": 0.5523048080939996,
+      "mean_return": 21.6459611070278,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 5.412831605115466,
+          "clear_s": 10.294771113501422,
+          "measured_from_s": 10.294771113501422,
+          "recovery_s": 2.7552288864985783
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1015,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.21642988541825847,
+      "slot_rmse_m": 0.3051958394927981,
+      "centroid_rmse_m": 0.12270000100988993,
+      "command_derivative_rms_m_s2": 0.5685956593868247,
+      "mean_return": 21.04863445813276,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 5.423071064275752,
+          "clear_s": 10.6739811870105,
+          "measured_from_s": 10.6739811870105,
+          "recovery_s": 2.8760188129895
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1016,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.18366400828944185,
+      "slot_rmse_m": 0.3648393265478429,
+      "centroid_rmse_m": 0.166534359801706,
+      "command_derivative_rms_m_s2": 0.7311945062429837,
+      "mean_return": 20.37960618474291,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 3.922482560131727,
+          "clear_s": 8.616498003266905,
+          "measured_from_s": 8.616498003266905,
+          "recovery_s": 3.833501996733096
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1017,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2870536298162212,
+      "slot_rmse_m": 0.28258421387138377,
+      "centroid_rmse_m": 0.12048106703036324,
+      "command_derivative_rms_m_s2": 0.5256685879686136,
+      "mean_return": 21.479641986377427,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 4.373063664618757,
+          "clear_s": 9.466772851045999,
+          "measured_from_s": 9.466772851045999,
+          "recovery_s": 2.583227148954002
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1018,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.24080730282416096,
+      "slot_rmse_m": 0.29074105762062896,
+      "centroid_rmse_m": 0.11733694963591594,
+      "command_derivative_rms_m_s2": 0.5666136341949207,
+      "mean_return": 21.42704566485761,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 3.978393596585043,
+          "clear_s": 8.816915520134572,
+          "measured_from_s": 8.816915520134572,
+          "recovery_s": 2.8830844798654294
+        }
+      ]
+    },
+    {
+      "scenario": "head_on",
+      "seed": 1019,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.038738436699543355,
+      "slot_rmse_m": 0.31041033231391735,
+      "centroid_rmse_m": 0.12895727526917086,
+      "command_derivative_rms_m_s2": 0.6787788739911157,
+      "mean_return": 20.840845889002722,
+      "events": [
+        {
+          "name": "head-on-1",
+          "start_s": 4.970611027397273,
+          "clear_s": 9.750354649504201,
+          "measured_from_s": 9.750354649504201,
+          "recovery_s": 2.9496453504958
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1000,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.27205624469778644,
+      "slot_rmse_m": 0.3815541049589692,
+      "centroid_rmse_m": 0.17875307122592446,
+      "command_derivative_rms_m_s2": 0.6479592818989022,
+      "mean_return": 19.003689412204114,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.0437830227615112,
+          "clear_s": 9.485029075525084,
+          "measured_from_s": 9.485029075525084,
+          "recovery_s": 2.314970924474917
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 12.813961694807805,
+          "clear_s": 19.68879781502251,
+          "measured_from_s": 19.68879781502251,
+          "recovery_s": 2.011202184977492
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1001,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.20098880164450328,
+      "slot_rmse_m": 0.3739776660385018,
+      "centroid_rmse_m": 0.15576779217069867,
+      "command_derivative_rms_m_s2": 0.7864429481550522,
+      "mean_return": 19.053205811663844,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.223100233044093,
+          "clear_s": 11.752149628470129,
+          "measured_from_s": 19.13317320959472,
+          "recovery_s": 1.6668267904052811
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 12.705700510438408,
+          "clear_s": 19.13317320959472,
+          "measured_from_s": 19.13317320959472,
+          "recovery_s": 1.6668267904052811
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1002,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2295709310453522,
+      "slot_rmse_m": 0.5065351878785913,
+      "centroid_rmse_m": 0.21762777296627914,
+      "command_derivative_rms_m_s2": 0.7470240379448733,
+      "mean_return": 16.79631734848821,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.187395527816872,
+          "clear_s": 10.282091681651291,
+          "measured_from_s": 15.65261837372628,
+          "recovery_s": 5.247381626273722
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 9.722337988803293,
+          "clear_s": 15.65261837372628,
+          "measured_from_s": 15.65261837372628,
+          "recovery_s": 5.247381626273722
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1003,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.3081741199342354,
+      "slot_rmse_m": 0.4796524827821203,
+      "centroid_rmse_m": 0.22529223726435244,
+      "command_derivative_rms_m_s2": 0.6667873929728758,
+      "mean_return": 17.516765077133908,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.19352916445864,
+          "clear_s": 10.433190469587508,
+          "measured_from_s": 10.433190469587508,
+          "recovery_s": 1.4168095304124932
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 13.79236250090558,
+          "clear_s": 20.278477757193762,
+          "measured_from_s": 20.278477757193762,
+          "recovery_s": null
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1004,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2913857027160829,
+      "slot_rmse_m": 0.40321800602800295,
+      "centroid_rmse_m": 0.15939522873060327,
+      "command_derivative_rms_m_s2": 0.6974867207122875,
+      "mean_return": 18.508316044856347,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.089662738603072,
+          "clear_s": 9.0737203831514,
+          "measured_from_s": 16.802752393813677,
+          "recovery_s": 1.1972476061863233
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 9.943371086218006,
+          "clear_s": 16.802752393813677,
+          "measured_from_s": 16.802752393813677,
+          "recovery_s": 1.1972476061863233
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1005,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.21776219524202822,
+      "slot_rmse_m": 0.4749219867762324,
+      "centroid_rmse_m": 0.2317031136089119,
+      "command_derivative_rms_m_s2": 0.7025819770245937,
+      "mean_return": 17.574087878556774,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.13841393584665,
+          "clear_s": 9.230729191416781,
+          "measured_from_s": 9.230729191416781,
+          "recovery_s": 1.0192708085832187
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 12.735172036430829,
+          "clear_s": 18.364015579119346,
+          "measured_from_s": 18.364015579119346,
+          "recovery_s": 4.935984420880654
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1006,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.21636145758280034,
+      "slot_rmse_m": 0.37341915923307967,
+      "centroid_rmse_m": 0.14681835250723851,
+      "command_derivative_rms_m_s2": 0.7078343321266091,
+      "mean_return": 18.822653898042585,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.251238932386182,
+          "clear_s": 11.225519185021444,
+          "measured_from_s": 17.368451849834248,
+          "recovery_s": 1.4815481501657537
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 10.59770217662426,
+          "clear_s": 17.368451849834248,
+          "measured_from_s": 17.368451849834248,
+          "recovery_s": 1.4815481501657537
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1007,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.29592743284672907,
+      "slot_rmse_m": 0.43942088007229546,
+      "centroid_rmse_m": 0.2252614971845525,
+      "command_derivative_rms_m_s2": 0.6985777269992373,
+      "mean_return": 18.22007754048208,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.8747620217830265,
+          "clear_s": 10.769202928145791,
+          "measured_from_s": 18.172081002852664,
+          "recovery_s": 3.8279189971473357
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 11.390771361270136,
+          "clear_s": 18.172081002852664,
+          "measured_from_s": 18.172081002852664,
+          "recovery_s": 3.8279189971473357
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1008,
+      "drones": 8,
+      "duration_s": 14.200000000000001,
+      "collision": true,
+      "failure": "collision",
+      "min_surface_clearance_m": -0.011381679502219133,
+      "slot_rmse_m": 0.4178380454399865,
+      "centroid_rmse_m": 0.18254730396259672,
+      "command_derivative_rms_m_s2": 0.8795856852004823,
+      "mean_return": -1.8752190236445694,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.8721869996422806,
+          "clear_s": 10.921314758708482,
+          "measured_from_s": 16.575552126794527,
+          "recovery_s": null
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 10.924160994243136,
+          "clear_s": 16.575552126794527,
+          "measured_from_s": 16.575552126794527,
+          "recovery_s": null
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1009,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.3352991894473304,
+      "slot_rmse_m": 0.46329681482381435,
+      "centroid_rmse_m": 0.22619815002940716,
+      "command_derivative_rms_m_s2": 0.6646649519051728,
+      "mean_return": 17.838890482885304,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.075823450505657,
+          "clear_s": 10.656916132210675,
+          "measured_from_s": 10.656916132210675,
+          "recovery_s": 1.043083867789326
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 12.15936211172578,
+          "clear_s": 18.070595248880906,
+          "measured_from_s": 18.070595248880906,
+          "recovery_s": 4.229404751119095
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1010,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2836462583197983,
+      "slot_rmse_m": 0.4298518374285012,
+      "centroid_rmse_m": 0.17826893546679468,
+      "command_derivative_rms_m_s2": 0.7609405528521871,
+      "mean_return": 18.264652269577475,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.809658296171144,
+          "clear_s": 10.45337011295234,
+          "measured_from_s": 16.003813087182404,
+          "recovery_s": 4.096186912817597
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 10.166161745727603,
+          "clear_s": 16.003813087182404,
+          "measured_from_s": 16.003813087182404,
+          "recovery_s": 4.096186912817597
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1011,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.37276201648219354,
+      "slot_rmse_m": 0.38647340181878226,
+      "centroid_rmse_m": 0.15379374927011547,
+      "command_derivative_rms_m_s2": 0.6113482729888225,
+      "mean_return": 19.08125567518485,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.9454272062661007,
+          "clear_s": 10.976106855265666,
+          "measured_from_s": 10.976106855265666,
+          "recovery_s": 1.223893144734335
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 12.613867651611859,
+          "clear_s": 19.127199411918873,
+          "measured_from_s": 19.127199411918873,
+          "recovery_s": 1.4228005880811274
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1012,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.14925808016785214,
+      "slot_rmse_m": 0.49055407026763326,
+      "centroid_rmse_m": 0.21903233634789457,
+      "command_derivative_rms_m_s2": 0.7317931058037119,
+      "mean_return": 16.496179044562,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.009013039170833,
+          "clear_s": 11.517584505416554,
+          "measured_from_s": 18.06173240491729,
+          "recovery_s": 3.2882675950827114
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 11.690406196617381,
+          "clear_s": 18.06173240491729,
+          "measured_from_s": 18.06173240491729,
+          "recovery_s": 3.2882675950827114
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1013,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.31597169787161483,
+      "slot_rmse_m": 0.42418949902515496,
+      "centroid_rmse_m": 0.218651748057785,
+      "command_derivative_rms_m_s2": 0.6671093453187323,
+      "mean_return": 18.423402360410584,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.070277750702367,
+          "clear_s": 10.95128489419474,
+          "measured_from_s": 10.95128489419474,
+          "recovery_s": 1.1487151058052607
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 13.072929586092162,
+          "clear_s": 19.942876808112494,
+          "measured_from_s": 19.942876808112494,
+          "recovery_s": 2.657123191887507
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1014,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.3021867889602512,
+      "slot_rmse_m": 0.3863381105297716,
+      "centroid_rmse_m": 0.16092462660486603,
+      "command_derivative_rms_m_s2": 0.6555032132187891,
+      "mean_return": 18.923724784694844,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.412831605115466,
+          "clear_s": 12.542472042208338,
+          "measured_from_s": 18.553903565404198,
+          "recovery_s": 1.6960964345958018
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 12.213042371231777,
+          "clear_s": 18.553903565404198,
+          "measured_from_s": 18.553903565404198,
+          "recovery_s": 1.6960964345958018
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1015,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2936042860826902,
+      "slot_rmse_m": 0.4264095341417702,
+      "centroid_rmse_m": 0.17898029352577796,
+      "command_derivative_rms_m_s2": 0.743391745668557,
+      "mean_return": 18.464178958095545,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 5.423071064275752,
+          "clear_s": 11.455160819088553,
+          "measured_from_s": 11.455160819088553,
+          "recovery_s": 2.1448391809114487
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 14.60552726321636,
+          "clear_s": 20.306216492960118,
+          "measured_from_s": 20.306216492960118,
+          "recovery_s": 3.5437835070398833
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1016,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.2588530891399736,
+      "slot_rmse_m": 0.4985703601495857,
+      "centroid_rmse_m": 0.25340544475421284,
+      "command_derivative_rms_m_s2": 0.7110274823212204,
+      "mean_return": 16.872328510028353,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.922482560131727,
+          "clear_s": 9.493840910287219,
+          "measured_from_s": 9.493840910287219,
+          "recovery_s": 1.1561590897127818
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 11.01193212461965,
+          "clear_s": 17.97885929401321,
+          "measured_from_s": 17.97885929401321,
+          "recovery_s": 4.4711407059867945
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1017,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.22944731279402497,
+      "slot_rmse_m": 0.4008545009262586,
+      "centroid_rmse_m": 0.18495936629732804,
+      "command_derivative_rms_m_s2": 0.7314107166052225,
+      "mean_return": 18.697211250452618,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.373063664618757,
+          "clear_s": 10.96884004957464,
+          "measured_from_s": 10.96884004957464,
+          "recovery_s": 1.4311599504253607
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 14.231770768796782,
+          "clear_s": 20.364426080208,
+          "measured_from_s": 20.364426080208,
+          "recovery_s": 2.2855739197920037
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1018,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.22512048604922263,
+      "slot_rmse_m": 0.4464389194873758,
+      "centroid_rmse_m": 0.2197936459218447,
+      "command_derivative_rms_m_s2": 0.6956164253766978,
+      "mean_return": 17.994436344746095,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 3.978393596585043,
+          "clear_s": 10.724183637286993,
+          "measured_from_s": 16.296169931491356,
+          "recovery_s": 3.403830068508647
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 10.432776021414401,
+          "clear_s": 16.296169931491356,
+          "measured_from_s": 16.296169931491356,
+          "recovery_s": 3.403830068508647
+        }
+      ]
+    },
+    {
+      "scenario": "double_crossing",
+      "seed": 1019,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.02149128440789927,
+      "slot_rmse_m": 0.5026079264352591,
+      "centroid_rmse_m": 0.2362821497915009,
+      "command_derivative_rms_m_s2": 0.8228089206807795,
+      "mean_return": 16.90167392588397,
+      "events": [
+        {
+          "name": "crossing-1",
+          "start_s": 4.970611027397273,
+          "clear_s": 10.569170806029934,
+          "measured_from_s": 10.569170806029934,
+          "recovery_s": 2.930829193970066
+        },
+        {
+          "name": "crossing-2",
+          "start_s": 14.954795929899827,
+          "clear_s": 20.72191934855979,
+          "measured_from_s": 20.72191934855979,
+          "recovery_s": null
+        }
+      ]
+    },
+    {
+      "scenario": "turn",
+      "seed": 1000,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.780876209935823,
+      "slot_rmse_m": 0.0423912879724011,
+      "centroid_rmse_m": 0.03760685221875705,
+      "command_derivative_rms_m_s2": 0.07872652029254246,
+      "mean_return": 23.910619405648276,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1001,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8347963318614086,
+      "slot_rmse_m": 0.0429060644901108,
+      "centroid_rmse_m": 0.03756328714729587,
+      "command_derivative_rms_m_s2": 0.08781271245504076,
+      "mean_return": 23.909131726338074,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1002,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7553210835304,
+      "slot_rmse_m": 0.04270537118395622,
+      "centroid_rmse_m": 0.03747084248560197,
+      "command_derivative_rms_m_s2": 0.08719990694184356,
+      "mean_return": 23.909613249072173,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1003,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.847185721883733,
+      "slot_rmse_m": 0.041919509329123195,
+      "centroid_rmse_m": 0.0366690747551552,
+      "command_derivative_rms_m_s2": 0.08376511705145179,
+      "mean_return": 23.911397929054452,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1004,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8423248235908262,
+      "slot_rmse_m": 0.04268410186658382,
+      "centroid_rmse_m": 0.03698156472792356,
+      "command_derivative_rms_m_s2": 0.08091845938635016,
+      "mean_return": 23.909900959750914,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1005,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8017455694618728,
+      "slot_rmse_m": 0.042902456813357595,
+      "centroid_rmse_m": 0.037878220057388653,
+      "command_derivative_rms_m_s2": 0.08300664814165794,
+      "mean_return": 23.909572848851926,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1006,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8291186028334355,
+      "slot_rmse_m": 0.04232064871823526,
+      "centroid_rmse_m": 0.03767278976091701,
+      "command_derivative_rms_m_s2": 0.0799081258677023,
+      "mean_return": 23.91069984607082,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1007,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8381273499339502,
+      "slot_rmse_m": 0.042028407942771184,
+      "centroid_rmse_m": 0.03703154793882409,
+      "command_derivative_rms_m_s2": 0.08287733042635273,
+      "mean_return": 23.9112786271221,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1008,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7614297498656436,
+      "slot_rmse_m": 0.04240847897642363,
+      "centroid_rmse_m": 0.037207895410499396,
+      "command_derivative_rms_m_s2": 0.08492259854844013,
+      "mean_return": 23.910464838486554,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1009,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8010792836062072,
+      "slot_rmse_m": 0.04285627873496853,
+      "centroid_rmse_m": 0.03789807133092507,
+      "command_derivative_rms_m_s2": 0.08076394505133301,
+      "mean_return": 23.909501269363883,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1010,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7584172247063251,
+      "slot_rmse_m": 0.04333210992404425,
+      "centroid_rmse_m": 0.03699807963356381,
+      "command_derivative_rms_m_s2": 0.09102732219110267,
+      "mean_return": 23.908399207578093,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1011,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8261484063543872,
+      "slot_rmse_m": 0.04300435195143184,
+      "centroid_rmse_m": 0.037447358074501974,
+      "command_derivative_rms_m_s2": 0.08160812528259602,
+      "mean_return": 23.909159044968774,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1012,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8135823814243156,
+      "slot_rmse_m": 0.04192676454365933,
+      "centroid_rmse_m": 0.037047906315689626,
+      "command_derivative_rms_m_s2": 0.08173404901667126,
+      "mean_return": 23.91150757719454,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1013,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8395118534798084,
+      "slot_rmse_m": 0.041673208854018165,
+      "centroid_rmse_m": 0.03694445479169493,
+      "command_derivative_rms_m_s2": 0.08267739421318027,
+      "mean_return": 23.912077674549415,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1014,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7989181832398061,
+      "slot_rmse_m": 0.04178356893165684,
+      "centroid_rmse_m": 0.0370811279742783,
+      "command_derivative_rms_m_s2": 0.08041239225497512,
+      "mean_return": 23.911853549104762,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1015,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7876345675381474,
+      "slot_rmse_m": 0.04240096971402668,
+      "centroid_rmse_m": 0.03701883104153279,
+      "command_derivative_rms_m_s2": 0.08078975418145543,
+      "mean_return": 23.910514529339334,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1016,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7957731282715709,
+      "slot_rmse_m": 0.042302516014612566,
+      "centroid_rmse_m": 0.03692307742861112,
+      "command_derivative_rms_m_s2": 0.08197308636199406,
+      "mean_return": 23.910740020385525,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1017,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7849587379177895,
+      "slot_rmse_m": 0.042692932890070374,
+      "centroid_rmse_m": 0.037057312131977195,
+      "command_derivative_rms_m_s2": 0.08740783679380135,
+      "mean_return": 23.90968956467826,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1018,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7887581234540318,
+      "slot_rmse_m": 0.04196807861006941,
+      "centroid_rmse_m": 0.03696039130820875,
+      "command_derivative_rms_m_s2": 0.07885289102031265,
+      "mean_return": 23.911417255578378,
+      "events": []
+    },
+    {
+      "scenario": "turn",
+      "seed": 1019,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8004634676397834,
+      "slot_rmse_m": 0.04223705559625071,
+      "centroid_rmse_m": 0.03671243794536872,
+      "command_derivative_rms_m_s2": 0.08668910725550227,
+      "mean_return": 23.910682625143583,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1000,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.780876209935823,
+      "slot_rmse_m": 0.1851441790004614,
+      "centroid_rmse_m": 0.17123636192624794,
+      "command_derivative_rms_m_s2": 0.19837646074294502,
+      "mean_return": 23.095857576755726,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1001,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8347963318614086,
+      "slot_rmse_m": 0.18532105272539878,
+      "centroid_rmse_m": 0.17131031653689735,
+      "command_derivative_rms_m_s2": 0.2016867186111127,
+      "mean_return": 23.0941820994624,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1002,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7553210835304,
+      "slot_rmse_m": 0.1852791339139994,
+      "centroid_rmse_m": 0.17124738257083147,
+      "command_derivative_rms_m_s2": 0.20015644570653912,
+      "mean_return": 23.094525525250518,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1003,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.847185721883733,
+      "slot_rmse_m": 0.18512768305402158,
+      "centroid_rmse_m": 0.17110504090753068,
+      "command_derivative_rms_m_s2": 0.2003370853309991,
+      "mean_return": 23.096006500547965,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1004,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8423248235908262,
+      "slot_rmse_m": 0.18526329209146128,
+      "centroid_rmse_m": 0.17114043696558423,
+      "command_derivative_rms_m_s2": 0.19987124365088518,
+      "mean_return": 23.09478467544737,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1005,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8017455694618728,
+      "slot_rmse_m": 0.18521325372668987,
+      "centroid_rmse_m": 0.1712645994988068,
+      "command_derivative_rms_m_s2": 0.20066190102620193,
+      "mean_return": 23.09518139507148,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1006,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8291186028334355,
+      "slot_rmse_m": 0.185144072529291,
+      "centroid_rmse_m": 0.1712311202102539,
+      "command_derivative_rms_m_s2": 0.19916367649095415,
+      "mean_return": 23.095805008857898,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1007,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8381273499339502,
+      "slot_rmse_m": 0.18504954881493735,
+      "centroid_rmse_m": 0.1711045636088935,
+      "command_derivative_rms_m_s2": 0.1999200206015074,
+      "mean_return": 23.096700363287106,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1008,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7614297498656436,
+      "slot_rmse_m": 0.18522423197302706,
+      "centroid_rmse_m": 0.17113266537971294,
+      "command_derivative_rms_m_s2": 0.19947521573616595,
+      "mean_return": 23.095202323774863,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1009,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8010792836062072,
+      "slot_rmse_m": 0.18527824601463072,
+      "centroid_rmse_m": 0.1712958924612953,
+      "command_derivative_rms_m_s2": 0.19962867721744598,
+      "mean_return": 23.094596323598807,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1010,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7584172247063251,
+      "slot_rmse_m": 0.18537757623359621,
+      "centroid_rmse_m": 0.17109169039143987,
+      "command_derivative_rms_m_s2": 0.20291109180982758,
+      "mean_return": 23.093641212909084,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1011,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8261484063543872,
+      "slot_rmse_m": 0.18531098505607296,
+      "centroid_rmse_m": 0.1712578963403105,
+      "command_derivative_rms_m_s2": 0.19961655976932557,
+      "mean_return": 23.09437389412028,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1012,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8135823814243156,
+      "slot_rmse_m": 0.18500605962152977,
+      "centroid_rmse_m": 0.1710966212734361,
+      "command_derivative_rms_m_s2": 0.19975812066582835,
+      "mean_return": 23.097118566526117,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1013,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8395118534798084,
+      "slot_rmse_m": 0.18498578353351985,
+      "centroid_rmse_m": 0.17113268425434403,
+      "command_derivative_rms_m_s2": 0.20073759718164932,
+      "mean_return": 23.097314664945692,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1014,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7989181832398061,
+      "slot_rmse_m": 0.18489356564891055,
+      "centroid_rmse_m": 0.1710985497109276,
+      "command_derivative_rms_m_s2": 0.20081679903708238,
+      "mean_return": 23.09808631479427,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1015,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7876345675381474,
+      "slot_rmse_m": 0.18514528390543022,
+      "centroid_rmse_m": 0.17115408906839943,
+      "command_derivative_rms_m_s2": 0.19991851032418062,
+      "mean_return": 23.095853302320442,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1016,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7957731282715709,
+      "slot_rmse_m": 0.18506173672707443,
+      "centroid_rmse_m": 0.17109180349182443,
+      "command_derivative_rms_m_s2": 0.2004816928058779,
+      "mean_return": 23.09663214376912,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1017,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7849587379177895,
+      "slot_rmse_m": 0.18512695802626056,
+      "centroid_rmse_m": 0.17114477355814744,
+      "command_derivative_rms_m_s2": 0.20230892378153534,
+      "mean_return": 23.095906239264966,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1018,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.7887581234540318,
+      "slot_rmse_m": 0.18499473977247669,
+      "centroid_rmse_m": 0.1710899652468987,
+      "command_derivative_rms_m_s2": 0.19904047733718572,
+      "mean_return": 23.09725363232115,
+      "events": []
+    },
+    {
+      "scenario": "gust",
+      "seed": 1019,
+      "drones": 8,
+      "duration_s": 24.0,
+      "collision": false,
+      "failure": null,
+      "min_surface_clearance_m": 0.8004634676397834,
+      "slot_rmse_m": 0.18515685711594101,
+      "centroid_rmse_m": 0.1710988142372294,
+      "command_derivative_rms_m_s2": 0.2008493185934997,
+      "mean_return": 23.095710220945683,
+      "events": []
+    }
+  ]
+}

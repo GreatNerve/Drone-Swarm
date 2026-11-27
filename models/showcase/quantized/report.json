@@ -1,0 +1,142 @@
+{
+  "checkpoint": "models/showcase/best.pt",
+  "scenarios": [
+    "hold",
+    "follow",
+    "crossing",
+    "head_on",
+    "double_crossing",
+    "turn",
+    "gust"
+  ],
+  "seeds": [
+    1000,
+    1019
+  ],
+  "action_samples": 13440,
+  "torch_threads": 4,
+  "variants": [
+    {
+      "variant": "original",
+      "description": "full training checkpoint (actor, critic, optimizer)",
+      "precision": "fp32",
+      "file": "models/showcase/best.pt",
+      "size_bytes": 6889271,
+      "size_ratio": 1.0,
+      "mean_action_error": 0.0,
+      "max_action_error": 0.0,
+      "ms_per_team_step": 2.129567999994227,
+      "compute": "float32",
+      "episodes": 140,
+      "failures": 1,
+      "failed": [
+        "double_crossing:1008"
+      ],
+      "events": 80,
+      "recovered_within_limit": 74,
+      "mean_slot_rmse_m": 0.18436261619016664,
+      "min_obstacle_clearance_m": -0.011381679502219133,
+      "checks_passed": 1,
+      "checks": 3,
+      "passes_verdict": false
+    },
+    {
+      "variant": "fp32",
+      "description": "actor only, float32 weights (critic and optimizer dropped)",
+      "precision": "fp32",
+      "file": "models/showcase/quantized/fp32/model.pt",
+      "size_bytes": 1148597,
+      "size_ratio": 0.16672257485588823,
+      "mean_action_error": 0.0,
+      "max_action_error": 0.0,
+      "ms_per_team_step": 2.115081666658322,
+      "compute": "float32",
+      "episodes": 140,
+      "failures": 1,
+      "failed": [
+        "double_crossing:1008"
+      ],
+      "events": 80,
+      "recovered_within_limit": 74,
+      "mean_slot_rmse_m": 0.18436261619016664,
+      "min_obstacle_clearance_m": -0.011381679502219133,
+      "checks_passed": 1,
+      "checks": 3,
+      "passes_verdict": false
+    },
+    {
+      "variant": "fp16",
+      "description": "actor only, float16 weights computed in float32",
+      "precision": "fp16",
+      "file": "models/showcase/quantized/fp16/model.pt",
+      "size_bytes": 580277,
+      "size_ratio": 0.08422908606730668,
+      "mean_action_error": 3.873827517963946e-05,
+      "max_action_error": 0.0003098268061876297,
+      "ms_per_team_step": 2.111473333328225,
+      "compute": "float32",
+      "episodes": 140,
+      "failures": 1,
+      "failed": [
+        "double_crossing:1008"
+      ],
+      "events": 80,
+      "recovered_within_limit": 74,
+      "mean_slot_rmse_m": 0.18426703359295857,
+      "min_obstacle_clearance_m": -0.010520597208982685,
+      "checks_passed": 1,
+      "checks": 3,
+      "passes_verdict": false
+    },
+    {
+      "variant": "int8",
+      "description": "8-bit weights, one scale per output channel, computed in float32",
+      "precision": "int8",
+      "file": "models/showcase/quantized/int8/model.pt",
+      "size_bytes": 313637,
+      "size_ratio": 0.04552542642029904,
+      "mean_action_error": 0.0010975156910717487,
+      "max_action_error": 0.009802505373954773,
+      "ms_per_team_step": 2.1663736666717646,
+      "compute": "float32",
+      "episodes": 140,
+      "failures": 1,
+      "failed": [
+        "double_crossing:1008"
+      ],
+      "events": 80,
+      "recovered_within_limit": 76,
+      "mean_slot_rmse_m": 0.18673500339326526,
+      "min_obstacle_clearance_m": -0.006667878272528127,
+      "checks_passed": 2,
+      "checks": 3,
+      "passes_verdict": false
+    },
+    {
+      "variant": "int8-dynamic",
+      "description": "8-bit weights run by PyTorch dynamic INT8 kernels (inputs quantized too)",
+      "precision": "int8",
+      "file": "models/showcase/quantized/int8-dynamic/model.pt",
+      "size_bytes": 313637,
+      "size_ratio": 0.04552542642029904,
+      "mean_action_error": 0.002546671312302351,
+      "max_action_error": 0.05864318460226059,
+      "ms_per_team_step": 3.300041666661855,
+      "compute": "int8 kernels (onednn)",
+      "episodes": 140,
+      "failures": 3,
+      "failed": [
+        "head_on:1013",
+        "double_crossing:1008",
+        "double_crossing:1012"
+      ],
+      "events": 80,
+      "recovered_within_limit": 71,
+      "mean_slot_rmse_m": 0.18596365531677597,
+      "min_obstacle_clearance_m": -0.006899286020458195,
+      "checks_passed": 1,
+      "checks": 3,
+      "passes_verdict": false
+    }
+  ]
+}

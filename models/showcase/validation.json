@@ -1,0 +1,149 @@
+{
+  "type": "evaluation",
+  "reason": "start",
+  "environment_steps": 1601536,
+  "score": 0.9272893413125376,
+  "best": true,
+  "plain_score": 0.9515428678626447,
+  "min_obstacle_clearance_m": 0.07972861928809694,
+  "success_rate": 1.0,
+  "mean_slot_rmse_m": 0.181328528549421,
+  "events": 80,
+  "recovered_events": 79,
+  "scenarios": [
+    "hold",
+    "follow",
+    "crossing",
+    "head_on",
+    "double_crossing",
+    "turn",
+    "gust"
+  ],
+  "seeds": [
+    5000,
+    5019
+  ],
+  "seconds": 224.4,
+  "summary": {
+    "hold": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.029907317129768185,
+      "slot_rmse_std_m": 0.0005971269556977455,
+      "slot_rmse_ci95_m": {
+        "low": 0.029645614702797203,
+        "high": 0.030169019556739167
+      },
+      "min_surface_clearance_m": 0.7625426039928794,
+      "events": 0,
+      "recovered_events": 0,
+      "mean_recovery_s_conditional": null,
+      "max_recovery_s_conditional": null
+    },
+    "follow": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.029221722454244304,
+      "slot_rmse_std_m": 0.0005663429225735907,
+      "slot_rmse_ci95_m": {
+        "low": 0.028973511724648016,
+        "high": 0.029469933183840592
+      },
+      "min_surface_clearance_m": 0.7625426039928794,
+      "events": 0,
+      "recovered_events": 0,
+      "mean_recovery_s_conditional": null,
+      "max_recovery_s_conditional": null
+    },
+    "crossing": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.2736961309464308,
+      "slot_rmse_std_m": 0.024520966638016294,
+      "slot_rmse_ci95_m": {
+        "low": 0.26294934348421545,
+        "high": 0.28444291840864616
+      },
+      "min_surface_clearance_m": 0.13669436533444457,
+      "events": 20,
+      "recovered_events": 20,
+      "mean_recovery_s_conditional": 1.5828506985308686,
+      "max_recovery_s_conditional": 2.599200116481505
+    },
+    "head_on": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.29324857034759233,
+      "slot_rmse_std_m": 0.020031840873259783,
+      "slot_rmse_ci95_m": {
+        "low": 0.2844692289978071,
+        "high": 0.3020279116973776
+      },
+      "min_surface_clearance_m": 0.07972861928809694,
+      "events": 20,
+      "recovered_events": 20,
+      "mean_recovery_s_conditional": 2.402829433078942,
+      "max_recovery_s_conditional": 3.249555747970472
+    },
+    "double_crossing": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.41565623501847393,
+      "slot_rmse_std_m": 0.04214882505612585,
+      "slot_rmse_ci95_m": {
+        "low": 0.39718369797101416,
+        "high": 0.4341287720659337
+      },
+      "min_surface_clearance_m": 0.08805585607681532,
+      "events": 40,
+      "recovered_events": 39,
+      "mean_recovery_s_conditional": 2.0703318681153267,
+      "max_recovery_s_conditional": 4.896843090630703
+    },
+    "turn": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.04241026027210479,
+      "slot_rmse_std_m": 0.00046840487796120456,
+      "slot_rmse_ci95_m": {
+        "low": 0.042204972783074494,
+        "high": 0.04261554776113508
+      },
+      "min_surface_clearance_m": 0.7625426039928794,
+      "events": 0,
+      "recovered_events": 0,
+      "mean_recovery_s_conditional": null,
+      "max_recovery_s_conditional": null
+    },
+    "gust": {
+      "episodes": 20,
+      "failures": 0,
+      "collisions": 0,
+      "success_rate": 1.0,
+      "mean_slot_rmse_m": 0.18515946367733266,
+      "slot_rmse_std_m": 8.861903784489947e-05,
+      "slot_rmse_ci95_m": {
+        "low": 0.18512062467155918,
+        "high": 0.18519830268310614
+      },
+      "min_surface_clearance_m": 0.7625426039928794,
+      "events": 0,
+      "recovered_events": 0,
+      "mean_recovery_s_conditional": null,
+      "max_recovery_s_conditional": null
+    }
+  },
+  "checkpoint": "best.pt"
+}
