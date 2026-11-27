@@ -1,4 +1,6 @@
 import json
+import shutil
+from datetime import UTC, datetime
 
 import numpy as np
 import pytest
@@ -6,6 +8,7 @@ import torch
 
 from swarmflow import Config, SwarmEnv
 from swarmflow import quantize
+from swarmflow.curriculum import model_report
 from swarmflow.files import load_torch
 from swarmflow.policy import LearnedController
 from swarmflow.train import train
@@ -17,6 +20,23 @@ def checkpoint(tmp_path_factory):
     train(Config(drones=4, duration=.2), ["hold"], total_steps=8, horizon=8, epochs=1, output=folder, envs=1,
           eval_seeds=1, width=32, clone_steps=4, clone_epochs=1)
     return folder / "best.pt"
+
+
+def test_training_time_survives_copy_and_quantization(checkpoint, tmp_path):
+    trained_at = model_report(checkpoint)["last_trained_at"]
+    assert datetime.fromisoformat(trained_at).tzinfo == UTC
+    copied = shutil.copyfile(checkpoint, tmp_path / "copy.pt")
+    assert model_report(copied)["last_trained_at"] == trained_at
+
+    data = load_torch(copied)
+    variant = tmp_path / "fp16.pt"
+    torch.save(quantize.build_variant(data, "fp16"), variant)
+    assert model_report(variant)["last_trained_at"] == trained_at
+
+    del data["last_trained_at"]
+    legacy = tmp_path / "legacy.pt"
+    torch.save(data, legacy)
+    assert model_report(legacy)["last_trained_at"] is None
 
 
 def test_every_preset_is_smaller_loads_everywhere_and_flies_like_the_original(checkpoint, tmp_path):

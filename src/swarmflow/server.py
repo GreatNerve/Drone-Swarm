@@ -5,11 +5,13 @@ import time
 from dataclasses import replace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from pickle import UnpicklingError
 from urllib.parse import urlparse
 import numpy as np
 
 from .baseline import PredictiveController, SlotController
 from .config import GEOMETRIES, WORLDS
+from .curriculum import default_model, viewer_model_option, viewer_models
 from .env import SwarmEnv
 from .scenarios import SCENARIOS
 
@@ -30,52 +32,64 @@ def _stamp(path):
 
 
 def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="models", interval=5.0,
-                safety_filter=False):
+                safety_filter=False, baseline_only=False):
     """With follow=True the viewer keeps switching to the best model under models_dir as training saves it.
     With safety_filter the learned policy starts behind the safety filter (mode "filtered")."""
-    state = {"learned": None, "checkpoint": None, "stamp": None, "seed": 7}
-    if checkpoint:
-        state.update(learned=_load(checkpoint), checkpoint=str(checkpoint), stamp=_stamp(checkpoint))
+    def model_catalog():
+        return {} if baseline_only else viewer_models(models_dir, None if follow else checkpoint)
+
+    state = {"learned": None, "checkpoint": None, "stamp": None, "seed": 7, "model_id": "current",
+             "auto_start": follow and not checkpoint}
+    if checkpoint and not baseline_only:
+        model_id = next((key for key, (_, path) in model_catalog().items()
+                         if path.resolve() == Path(checkpoint).resolve()), "current")
+        state.update(learned=_load(checkpoint), checkpoint=str(checkpoint), stamp=_stamp(checkpoint),
+                     model_id=model_id)
         config = state["learned"].config
     base = config
 
-    def controller_for(mode, cfg):
+    def controller_for(mode, cfg, learned):
         if mode == "learned":
-            return state["learned"]
+            return learned
         if mode == "filtered":
             from .shield import SafetyFilter
-            return SafetyFilter(state["learned"], cfg)
+            return SafetyFilter(learned, cfg)
         return SlotController(cfg) if mode == "slot" else PredictiveController(cfg)
 
     initial = ("filtered" if safety_filter else "learned") if state["learned"] else "baseline"
-    state.update(env=SwarmEnv(config), controller=controller_for(initial, config), mode=initial,
+    state.update(env=SwarmEnv(config), controller=controller_for(initial, config, state["learned"]), mode=initial,
                  policy=CONTROLLER_LABELS[initial])
     state["env"].reset(seed=7)
     lock = threading.Lock()
     assets = Path(__file__).parent / "web"
 
     def follow_best():
-        from .curriculum import default_model
         while True:
             time.sleep(interval)
             try:
+                with lock:
+                    if state["model_id"] != "current":
+                        continue
+                    previous_stamp = state["stamp"]
                 found = default_model(models_dir)
                 stamp = _stamp(found) if found else None
-                if stamp is None or stamp == state["stamp"]:
+                if stamp is None or stamp == previous_stamp:
                     continue
                 fresh = _load(found)
-            except (OSError, ValueError, KeyError, RuntimeError):
+            except (OSError, ValueError, KeyError, RuntimeError, EOFError, UnpicklingError):
                 continue
             with lock:
-                first = state["learned"] is None
+                if state["model_id"] != "current" or state["stamp"] != previous_stamp:
+                    continue
                 state.update(learned=fresh, checkpoint=str(found), stamp=stamp)
                 if state["mode"] == "filtered":
-                    state.update(controller=controller_for("filtered", state["env"].config))
-                elif state["mode"] == "learned" or (first and state["mode"] == "baseline"):
+                    state.update(controller=controller_for("filtered", state["env"].config, fresh))
+                elif state["mode"] == "learned" or state["auto_start"]:
                     state.update(controller=fresh, mode="learned", policy=CONTROLLER_LABELS["learned"])
+                state["auto_start"] = False
             print(f"Viewer now uses {found}", flush=True)
 
-    if follow:
+    if follow and not baseline_only:
         threading.Thread(target=follow_best, daemon=True).start()
 
     class Handler(BaseHTTPRequestHandler):
@@ -95,13 +109,17 @@ def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="mo
         def snapshot(self):
             return {**state["env"].snapshot(), "policy": state["policy"], "mode": state["mode"],
                     "learned_available": state["learned"] is not None, "checkpoint": state["checkpoint"],
-                    "seed": state["seed"], "config": state["env"].config.to_dict()}
+                    "model_id": state["model_id"], "seed": state["seed"], "config": state["env"].config.to_dict()}
 
         def do_GET(self):
             route = urlparse(self.path).path
             if route == "/api/state":
                 with lock:
                     self.respond(self.snapshot())
+                return
+            if route == "/api/models":
+                self.respond({"models": [viewer_model_option(key, label, path)
+                                         for key, (label, path) in model_catalog().items()]})
                 return
             if route == "/api/model":
                 from .curriculum import model_report, training_status
@@ -176,27 +194,44 @@ def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="mo
                         controller = data.get("controller", state["mode"])
                         if controller not in CONTROLLER_LABELS:
                             raise ValueError("controller must be 'learned', 'filtered', 'baseline' or 'slot'")
-                        if controller in ("learned", "filtered") and not state["learned"]:
-                            raise ValueError("No trained policy is loaded; train one (make training) or "
-                                             "start the viewer with --checkpoint")
+                        learned = state["learned"]
+                        selected = {}
+                        defaults = base
+                        if controller in ("learned", "filtered"):
+                            model_id = data.get("model_id", state["model_id"])
+                            models = model_catalog()
+                            if not isinstance(model_id, str) or model_id not in models:
+                                raise ValueError("The selected checkpoint is unavailable. Refresh the model list.")
+                            _, path = models[model_id]
+                            try:
+                                stamp = _stamp(path)
+                                if stamp != state["stamp"]:
+                                    learned = _load(path)
+                            except (OSError, ValueError, KeyError, RuntimeError, EOFError, UnpicklingError) as error:
+                                raise ValueError(f"Could not load the selected checkpoint: {path}") from error
+                            selected = {"learned": learned, "checkpoint": str(path), "stamp": stamp,
+                                        "model_id": model_id}
+                            defaults = learned.config
                         sensing = {}
                         for key in ("noise", "dropout"):
-                            value = data.get(key, getattr(base, key))
+                            value = data.get(key, getattr(defaults, key))
                             if not isinstance(value, (int, float)) or isinstance(value, bool):
                                 raise ValueError(f"{key} must be numeric")
                             sensing[key] = float(value)
-                        requested = data.get("obstacles", base.obstacles)
+                        requested = data.get("obstacles", defaults.obstacles)
                         if not isinstance(requested, int) or isinstance(requested, bool):
                             raise ValueError("obstacles must be an integer")
                         capacity = 16 if continuous or world in ("canyon", "pillars", "hills") else requested
-                        new_config = replace(env.config, drones=count, geometry=geometry, world=world,
+                        new_config = replace(defaults, drones=count, geometry=geometry, world=world,
                                              spacing=spacing, duration=float(duration),
                                              obstacles=max(requested, capacity), **sensing)
                         new_env = SwarmEnv(new_config, scenario)
                         new_env.reset(seed=seed)
                         new_env.continuous = continuous
-                        state.update(env=new_env, seed=seed, controller=controller_for(controller, new_config),
-                                     mode=controller, policy=CONTROLLER_LABELS[controller])
+                        state.update(env=new_env, seed=seed, controller=controller_for(controller, new_config, learned),
+                                     mode=controller, policy=CONTROLLER_LABELS[controller], **selected)
+                        if "controller" in data:
+                            state["auto_start"] = False
                     elif self.path == "/api/step":
                         count = data.get("steps", 1)
                         if not isinstance(count, int) or not 1 <= count <= 4:
@@ -224,8 +259,8 @@ def make_server(config, port=8765, checkpoint=None, follow=False, models_dir="mo
     return ThreadingHTTPServer(("127.0.0.1", port), Handler)
 
 
-def serve(config, port=8765, checkpoint=None, follow=False, safety_filter=False):
-    server = make_server(config, port, checkpoint, follow, safety_filter=safety_filter)
+def serve(config, port=8765, checkpoint=None, follow=False, safety_filter=False, baseline_only=False):
+    server = make_server(config, port, checkpoint, follow, safety_filter=safety_filter, baseline_only=baseline_only)
     print(f"SwarmFlow: http://127.0.0.1:{server.server_port} (Ctrl+C to stop)", flush=True)
     label = "learned checkpoint" + (" + safety filter" if safety_filter else "")
     print(f"Controller: {label + ' ' + str(checkpoint) if checkpoint else 'predictive baseline'}", flush=True)

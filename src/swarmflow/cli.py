@@ -244,6 +244,7 @@ def main():
             from .server import serve
             serve(config, args.port, None if args.baseline_only else path,
                   follow=not args.checkpoint and not args.baseline_only,
+                  baseline_only=args.baseline_only,
                   safety_filter=args.safety_filter and bool(path) and not args.baseline_only)
         else:
             if args.seeds < 1 or args.seed_start < 0:

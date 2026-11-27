@@ -1,4 +1,8 @@
 {
+  "checkpoint_commit": {
+    "revision": "c4f7249",
+    "committed_at": "2026-09-28T22:30:07+05:30"
+  },
   "pipeline_version": 3,
   "selected_run": "models/stage3-seed0",
   "selected_environment_steps": 700416,

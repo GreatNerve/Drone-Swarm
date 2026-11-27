@@ -1,5 +1,9 @@
 {
   "pipeline_version": 5,
+  "checkpoint_commit": {
+    "revision": "858ef95",
+    "committed_at": "2026-11-27T13:20:26+05:30"
+  },
   "selected_run": "models/stage3-seed0",
   "selected_environment_steps": 1601536,
   "validation_score": 0.9272893413125376,

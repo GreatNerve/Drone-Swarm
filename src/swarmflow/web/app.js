@@ -69,25 +69,42 @@ function accept(s) {
     $(id).disabled=resetting||!pilot||!s.running;
 }
 
-// Controller dropdown UI commented out for presentation; keep hints/sync for easy restore.
 const controllerHints={
   learned:'Neural network trained here with behavior cloning + PPO. Nothing else runs behind it.',
   filtered:'The same network behind the safety filter: a drone predicted within 0.1 m of contact flies the baseline for 0.5 s.',
   baseline:'Hand-coded sampled predictive controller: the reference the network is compared with.',
   slot:'Ablation that flies to its slot and ignores obstacles, showing the obstacles are a real threat.'
 };
-let shownMode=null,shownCheckpoint=null;
+let shownCheckpoint=null;
+async function loadModels(){
+  const {models}=await api('/api/models');
+  const group=$('trained-models');
+  group.replaceChildren();
+  for(const model of models){
+    const date=new Date(model.date||NaN);
+    const day=Number.isNaN(date.getTime())?'Date unavailable':
+      model.date_source+' '+date.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
+    group.append(new Option(model.label+' · '+day,model.id));
+  }
+  if(state)syncController(state);
+}
+function selectedController(){
+  const value=$('controller').value;
+  if(value==='baseline'||value==='slot')return {controller:value};
+  return {controller:$('safety-filter').checked?'filtered':'learned',model_id:value};
+}
 function syncController(s){
-  // Presentation: Controller <select> is commented out in index.html.
-  // const select=$('controller'),learned=select.querySelector('option[value="learned"]');
-  // learned.disabled=!s.learned_available;
-  // learned.textContent=s.learned_available?'Learned policy (trained model)':'Learned policy (no trained model yet)';
-  // if(s.mode!==shownMode){select.value=s.mode||'baseline';shownMode=s.mode;}
-  // select.disabled=resetting;
-  // $('controller-hint').textContent=controllerHints[s.mode]||'';
-  shownMode=s.mode||'baseline';
+  const select=$('controller'), trained=s.mode==='learned'||s.mode==='filtered';
+  select.disabled=$('safety-filter').disabled=resetting;
+  if(!resetting){
+    select.value=trained?s.model_id:s.mode;
+    $('safety-filter').checked=s.mode==='filtered';
+    $('filter-option').hidden=!trained;
+    const label=select.selectedOptions[0]?.textContent;
+    $('controller-hint').textContent=trained&&label?label+'. '+controllerHints[s.mode]:controllerHints[s.mode];
+  }
   $('learning-checkpoint').textContent=s.checkpoint||'';
-  if(s.checkpoint!==shownCheckpoint){shownCheckpoint=s.checkpoint;if(modelReport)loadModel();}
+  if(s.checkpoint!==shownCheckpoint){shownCheckpoint=s.checkpoint;if(modelReport)refreshModels();}
 }
 
 function steerVelocity() {
@@ -118,14 +135,12 @@ async function reset(start=false, continuous=false) {
   const spacing=Number($('compaction').value);
   const drones=parseInt($('drones').value,10);
   const seed=parseInt($('seed').value,10)||0;
-  // Presentation: Controller UI hidden; always use predictive baseline from the viewer controls.
-  // const controller=$('controller').value;
-  const controller='baseline';
+  const selection=selectedController();
   if(state)accept(state);
   try {
     notify('');
     const s=await api('/api/reset',{
-      scenario, drones, seed, geometry, world, spacing, controller,
+      scenario, drones, seed, geometry, world, spacing, ...selection,
       continuous: !!continuous || !!start,
       duration: (continuous || start) ? 3600 : 24
     });
@@ -141,11 +156,12 @@ async function reset(start=false, continuous=false) {
     }
     playing=start;
     accept(s);
-  } catch(e) {notify(e.message);/* if(state)$('controller').value=state.mode; */}
+  } catch(e) {notify(e.message);}
   finally {resetting=false;if(state)accept(state);}
 }
 $('reset').onclick=()=>reset(false, false);
-// $('controller').onchange=()=>reset(playing, playing);
+$('controller').onchange=()=>reset(playing, playing);
+$('safety-filter').onchange=()=>reset(playing, playing);
 $('geometry').onchange=()=>reset(playing, playing);
 $('compaction').onchange=()=>reset(playing, playing);
 $('terrain').onchange=()=>reset(playing, playing);
@@ -370,7 +386,8 @@ async function watch(test, scenario){
   const setup=test.setup;
   const payload={scenario, drones:setup.drones, seed:setup.seed, geometry:testDefaults.geometry,
     world:scenario==='terrain_follow'?'hills':testDefaults.world, spacing:testDefaults.spacing,
-    continuous:false, duration:24, controller:setup.controller||'baseline'};
+    continuous:false, duration:24, ...selectedController()};
+  if(state)accept(state);
   for(const key of ['noise','dropout','obstacles'])if(setup[key]!==undefined)payload[key]=setup[key];
   try{
     notify('');
@@ -437,7 +454,29 @@ async function loadModel(){
   catch(e){modelReport={available:false,error:e.message};}
   renderModel();
 }
-$('model-refresh').onclick=loadModel;
+async function refreshModels(){
+  try{await loadModels();}catch(e){notify(e.message);}
+  await loadModel();
+}
+$('model-refresh').onclick=refreshModels;
+function renderLastTrained(report) {
+  const value = $('last-trained-value'), detail = $('last-trained-detail');
+  const commit = report?.test?.checkpoint_commit;
+  const timestamp = report?.last_trained_at || commit?.committed_at;
+  const date = new Date(timestamp || NaN);
+  detail.textContent = '';
+  if (Number.isNaN(date.getTime())) {
+    if (report?.error) value.textContent = 'Unavailable';
+    else value.textContent = report?.available ? 'Date unrecorded' : 'No model loaded';
+    return;
+  }
+  const day = date.toLocaleDateString(undefined, {day: 'numeric', month: 'short', year: 'numeric'});
+  const clock = date.toLocaleTimeString(undefined, {hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
+  const time = el('time', '', day);
+  time.dateTime = timestamp;
+  value.replaceChildren(report.last_trained_at ? '' : 'By ', time);
+  detail.textContent = report.last_trained_at ? clock : `Committed at ${clock} · ${commit.revision}`;
+}
 const clock=seconds=>{const s=Math.max(0,Math.round(seconds));return `${Math.floor(s/3600)}:${String(Math.floor(s%3600/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;};
 function renderTraining(t,hasModel){
   const box=$('training-live');
@@ -461,6 +500,7 @@ function renderModel(){
   const r=modelReport,facts=$('model-facts'),checks=$('model-checks'),verdict=$('model-verdict');
   facts.replaceChildren();checks.replaceChildren();$('model-table').replaceChildren();
   verdict.className='verdict';
+  renderLastTrained(r);
   renderTraining(r&&r.training,r&&r.available);
   if(!r||!r.available){
     const live=r&&r.training&&r.training.active;
@@ -571,18 +611,16 @@ window.addEventListener('resize',drawCurves);
 setInterval(()=>{
   const t=modelReport&&modelReport.training;
   if(modelReport&&modelReport.available&&!(t&&t.active))return;
-  loadModel();
+  refreshModels();
   if(!playing&&!resetting)api('/api/state').then(accept).catch(()=>{});
 },10000);
 
-api('/api/state').then(async s=>{
+loadModels().then(()=>api('/api/state')).then(s=>{
   $('scenario').value=s.scenario;$('drones').value=String(s.positions.length);$('seed').value=s.seed;
   if(s.geometry)$('geometry').value=s.geometry;
   center=[s.target[0]-2,0,1.4];
-  // Presentation: force predictive baseline on load (server may start on learned if a checkpoint exists).
-  if(s.mode&&s.mode!=='baseline'){accept(s);await reset(false,false);}
-  else accept(s);
+  accept(s);
   loadTests();
   loadModel();
-}).catch(e=>notify(`Could not connect to the simulator: ${e.message}. Keep the Python server running and reload.`));
+}).catch(e=>notify(`Could not load the simulator: ${e.message}. Restart the viewer with make run and reload this page.`));
 requestAnimationFrame(tick);

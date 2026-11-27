@@ -7,6 +7,7 @@ import signal
 import threading
 import time
 from collections import deque
+from datetime import UTC, datetime
 from pathlib import Path
 import numpy as np
 import torch
@@ -503,6 +504,7 @@ def train(config, scenarios, total_steps=10000, horizon=128, epochs=4, seed=0,
                  "seconds": 0.0, "next_eval": first_eval_after(prior_steps), "pending_eval": False,
                  "start_validated": False, "last_validated": None, "lr_scale": 1.0, "bad_updates": 0}
     done_steps = 0
+    last_trained_at = (checkpoint or {}).get("last_trained_at")
     clone_optimizer = None
     session_started = time.monotonic()
     pending = {"best": None}
@@ -528,6 +530,7 @@ def train(config, scenarios, total_steps=10000, horizon=128, epochs=4, seed=0,
     def checkpoint_data(extra=None):
         return {"format": CHECKPOINT_FORMAT, "model": model.state_dict(), "optimizer": optimizer.state_dict(),
                 "config": config.to_dict(), "environment_steps": current_steps(), "training": settings,
+                "last_trained_at": last_trained_at,
                 "central_critic": central_critic, "separate_critic": separate_critic,
                 "network": model.network_spec(),
                 "reward_scaler": scaler.state() if scaler else None, "status": status,
@@ -628,6 +631,8 @@ def train(config, scenarios, total_steps=10000, horizon=128, epochs=4, seed=0,
                                                        device, data, labels, clone_noise if round_index == 0 else None)
                     demo = _demo_tensors(data, labels, device, config.radius, hyper["hard_weight"])
                     mse = _fit_clone(model, clone_optimizer, demo, clone_epochs, rng, device)
+                    if math.isfinite(mse):
+                        last_trained_at = datetime.now(UTC).isoformat(timespec="milliseconds")
                     row = _clone_row(round_index, clone_steps, clone_epochs, demo, episodes_done, failures, mse)
                     write(log, row)
                     print(f"[clone] round {row['round']} ({row['driver']}): {row['agent_samples']:,} samples "
@@ -805,6 +810,7 @@ def train(config, scenarios, total_steps=10000, horizon=128, epochs=4, seed=0,
                 healthy = (skipped * 2 <= minibatches
                            and all(bool(torch.isfinite(p).all()) for p in model.parameters()))
                 if healthy:
+                    last_trained_at = datetime.now(UTC).isoformat(timespec="milliseconds")
                     good = (copy.deepcopy(model.state_dict()), copy.deepcopy(optimizer.state_dict()))
                     state["bad_updates"] = 0
                 else:

@@ -373,6 +373,40 @@ def default_model(models_dir=MODELS_DIR):
     return max(scored, key=lambda item: item[0])[1] / "best.pt"
 
 
+def viewer_models(models_dir, checkpoint=None):
+    """Selectable run winners, plus an explicitly supplied viewer checkpoint."""
+    root = Path(models_dir)
+    models = {}
+    current = default_model(root)
+    if current:
+        models["current"] = ("Current best", current)
+    for pattern in ("previous-runs/*/showcase/best.pt", "showcase-archive/*/best.pt", "showcase-old-*/best.pt"):
+        for path in sorted(root.glob(pattern), reverse=True):
+            if path.is_file():
+                folder = path.parent.parent if path.parent.name == "showcase" else path.parent
+                models[path.relative_to(root).as_posix()] = (folder.name, path)
+    if checkpoint and all(path.resolve() != Path(checkpoint).resolve() for _, path in models.values()):
+        models["startup"] = ("Loaded checkpoint", Path(checkpoint))
+    return models
+
+
+def viewer_model_option(model_id, label, path):
+    from datetime import datetime, timezone
+    from pickle import UnpicklingError
+    try:
+        trained = checkpoint_metadata(path).get("last_trained_at")
+        commit = (_read(path.parent / "summary.json") or {}).get("checkpoint_commit") or {}
+        if trained:
+            date, source = trained, "trained"
+        elif commit.get("committed_at"):
+            date, source = commit["committed_at"], "committed"
+        else:
+            date, source = datetime.fromtimestamp(path.stat().st_mtime, timezone.utc).isoformat(), "file modified"
+    except (OSError, ValueError, KeyError, RuntimeError, EOFError, UnpicklingError):
+        date, source = None, None
+    return {"id": model_id, "label": label, "date": date, "date_source": source}
+
+
 def _thin(rows, limit=300):
     if len(rows) <= limit:
         return rows
@@ -442,7 +476,7 @@ def model_report(checkpoint):
                        "cloning": cloning, "evaluations": evaluations, "updates": _thin(updates)})
         pipeline_steps += end - start
     report = {"checkpoint": str(checkpoint), "format": metadata.get("format"), "status": metadata.get("status"),
-              "precision": metadata.get("precision"),
+              "precision": metadata.get("precision"), "last_trained_at": metadata.get("last_trained_at"),
               "environment_steps": metadata.get("environment_steps"), "pipeline_steps": pipeline_steps,
               "drones": metadata["config"]["drones"],
               "algorithm": training.get("algorithm"),

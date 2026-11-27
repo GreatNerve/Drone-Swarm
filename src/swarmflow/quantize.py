@@ -85,6 +85,7 @@ def build_variant(data, name, source=None):
             "network": {"width": int(network.get("width", 64)), "gap_features": bool(network.get("gap_features"))},
             "config": data["config"], "weights": weights, "scales": scales,
             "source_checkpoint": portable_path(source) if source else None,
+            "last_trained_at": data.get("last_trained_at"),
             "environment_steps": data.get("environment_steps"), "training": data.get("training"),
             "selection": data.get("selection"),
             "status": f"{settings['precision']} actor-only model; {data.get('status', '')}".rstrip("; ")}

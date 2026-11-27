@@ -8,22 +8,33 @@
 <body>
   <header><a class="brand" href="/" aria-label="SwarmFlow home"><span class="mark">╱╲</span> SwarmFlow<span class="version">LAB / 01</span></a><span class="header-note">COOPERATIVE FLIGHT SYSTEMS</span><span id="connection" class="connection">Connecting</span></header>
   <main>
-    <section class="intro"><div><p class="eyebrow">FORMATION RECOVERY LABORATORY</p><h1>Move together.<br><span>Make room. Return.</span></h1><p class="description">Follow a reference target, yield to crossing objects,<br>and return to the same place in the formation.</p></div><!-- Presentation: active-controller stamp hidden (class presentation-hidden) --><div class="mission-stamp presentation-hidden"><span>ACTIVE CONTROLLER</span><strong id="policy">Loading</strong><small>3D stabilized-flight model</small></div></section>
+    <section class="intro">
+      <div><p class="eyebrow">FORMATION RECOVERY LABORATORY</p><h1>Move together.<br><span>Make room. Return.</span></h1><p class="description">Follow a reference target, yield to crossing objects,<br>and return to the same place in the formation.</p></div>
+      <!-- Presentation: active-controller stamp hidden (class presentation-hidden) -->
+      <div class="mission-stamp presentation-hidden"><span>ACTIVE CONTROLLER</span><strong id="policy">Loading</strong><small>3D stabilized-flight model</small></div>
+      <section class="last-trained" aria-labelledby="last-trained-label">
+        <h2 id="last-trained-label">Last trained</h2>
+        <p id="last-trained-value">Loading…</p>
+        <small id="last-trained-detail"></small>
+      </section>
+    </section>
     <div id="learning-note" class="learning-note" hidden><strong>Learned policy</strong><p>The drones are flown by the trained neural network (<code id="learning-checkpoint">best.pt</code>), with no baseline or safety filter behind it. The viewer only runs the saved weights; it does not train them. Switch <b>Controller</b> to the predictive baseline to compare on the same seed, and see <a href="#model">Did the model learn correctly?</a> below for its training curve and held-out test.</p></div>
     <div id="error" role="alert" hidden></div>
     <section class="workspace">
       <aside>
         <div class="section-label"><span>01 / MISSION</span><span class="dot"></span></div>
-        <!-- Controller dropdown hidden for presentation; default remains predictive baseline.
         <label for="controller">Controller</label>
-        <select id="controller">
-          <option value="learned">Learned policy (trained model)</option>
-          <option value="filtered">Learned policy + safety filter</option>
-          <option value="baseline">Predictive baseline (hand-coded)</option>
-          <option value="slot">Slot-only (no avoidance)</option>
+        <select id="controller" aria-describedby="controller-hint" disabled>
+          <optgroup id="trained-models" label="Trained models"></optgroup>
+          <optgroup label="Hand-coded controllers">
+            <option value="baseline">Predictive baseline (hand-coded)</option>
+            <option value="slot">Slot-only (no avoidance)</option>
+          </optgroup>
         </select>
+        <div id="filter-option" hidden>
+          <label><input id="safety-filter" type="checkbox"> Apply safety filter</label>
+        </div>
         <p class="hint controller-hint" id="controller-hint"></p>
-        -->
         <label for="scenario">Flight scenario</label>
         <select id="scenario">
           <option value="crossing">Crossing object</option>
@@ -126,15 +137,14 @@
       </div>
       <div class="model-card"><h3>Learned policy vs predictive baseline on held-out seeds</h3><div id="model-table" class="table-wrap"></div></div>
     </section>
-    <!-- Presentation: validation-tests reference section hidden (class presentation-hidden) -->
-    <section class="tests presentation-hidden" id="tests" aria-labelledby="tests-title">
+    <section class="tests" id="tests" aria-labelledby="tests-title">
       <div class="tests-head">
         <div>
           <p class="eyebrow">VALIDATION TESTS · REFERENCE</p>
           <h2 id="tests-title">What each test number checks</h2>
           <p class="description">Every number is a fixed experiment taken from <code>docs/validation.md</code> and <code>docs/research-plan.md</code>.
             Run one from the terminal with <code>make test-N</code> (for example <code>make test-3</code>), or all with <code>make tests</code>.
-            Press <b>Watch</b> to fly that test's exact setup (scenario, drones, seed, sensing, controller) in the viewer above.</p>
+            Press <b>Watch</b> to fly the test scenario, drone count, seed and sensing settings with your selected controller.</p>
         </div>
         <button id="tests-refresh" class="secondary" type="button">Refresh results</button>
       </div>

@@ -1,4 +1,8 @@
 {
+  "checkpoint_commit": {
+    "revision": "1c1b7c3",
+    "committed_at": "2026-09-28T15:55:39+05:30"
+  },
   "selected_run": "models/stage3-seed0",
   "selected_environment_steps": 501760,
   "validation_score": 0.495697634906804,

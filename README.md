@@ -18,7 +18,7 @@ Start the interactive viewer with:
 make run
 ```
 
-Then open [http://127.0.0.1:8765](http://127.0.0.1:8765). The viewer automatically loads the trained model in `models/showcase/best.pt` when it exists; otherwise it runs the predictive classical baseline. The **Controller** menu switches between the learned policy, the baseline and the slot-only ablation.
+Then open [http://127.0.0.1:8765](http://127.0.0.1:8765). Under **Mission → Controller**, choose the current best trained model, a dated previous run, the hand-coded predictive baseline, or the slot-only controller. **Run**, **Reset**, and **Watch test** use that choice. Each model date is labeled by its source (training, commit, or file modification). The viewer starts with the showcase winner when available, then looks for the best stage checkpoint, and otherwise starts with the baseline.
 
 **To train the model yourself, follow [guide.md](guide.md)**; the whole curriculum is one command:
 
